@@ -73,7 +73,7 @@ function dtr_install {
         --ucp-username '${ucp_admin_username}' \
         --ucp-password '${ucp_admin_password}' \
         --ucp-insecure-tls \
-        --ucp-url https://ucpmgr.service.consul \
+        --ucp-url ${ucp_url} \
         --dtr-external-url $ADV_IP
       DTR_STATUS=$?
       set +x
