@@ -62,7 +62,7 @@ function swarm_wait_until_ready {
 function dtr_install {
     wait_for_ucp_manager
 
-    sleep 15
+    sleep 30
     DTR_STATUS=1
     DTR_ATTEMPTS=0
     until [ "$DTR_STATUS" -eq 0 ]; do
@@ -80,12 +80,12 @@ function dtr_install {
       debug "DTR STATUS $DTR_STATUS"
       if [ "$DTR_STATUS" -ne 0 ]; then
         DTR_ATTEMPTS=$((DTR_ATTEMPTS + 1))
-        if [ $DTR_ATTEMPTS -gt 5 ]; then
+        if [ $DTR_ATTEMPTS -gt 10 ]; then
           error "DTR failed too many times.  Exiting."
           exit 1
         else
           error "DTR failed to start.  Trying again."
-          sleep 15
+          sleep 30
         fi
       fi
     done
