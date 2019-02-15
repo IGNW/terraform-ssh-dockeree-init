@@ -25,7 +25,13 @@ variable "ssh_username" {
 }
 
 variable "ssh_password" {
-  description = "Password for connecting via ssh"
+  description = "Password for connecting via ssh (leave blank if using a private key)"
+  default = ""
+}
+
+variable "private_key" {
+  description = "Private key for connecting via ssh (leave blank if using a password)"
+  default = ""
 }
 
 variable "ucp_admin_username" {

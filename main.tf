@@ -44,69 +44,41 @@ resource "null_resource" "dockeree_init"
 
   count = "${var.node_count}"
 
+  connection = {
+    type          = "ssh"
+    host          = "${element (var.node_ips, count.index)}"
+    user          = "${var.ssh_username}"
+    password      = "${var.ssh_password}"
+    private_key   = "${var.private_key}"
+  }
+
   provisioner "file" {
-    connection = {
-      type          = "ssh"
-      host          = "${element (var.node_ips, count.index)}"
-      user          = "${var.ssh_username}"
-      password      = "${var.ssh_password}"
-    }
     source      = "${path.module}/scripts/swarm_init.sh"
     destination = "/tmp/swarm_init.sh"
   }
 
   provisioner "file" {
-    connection = {
-      type          = "ssh"
-      host          = "${element (var.node_ips, count.index)}"
-      user          = "${var.ssh_username}"
-      password      = "${var.ssh_password}"
-    }
     content     = "${data.template_file.consul_init.rendered}"
     destination = "/tmp/consul_init.sh"
   }
 
   provisioner "file" {
-    connection = {
-      type          = "ssh"
-      host          = "${element (var.node_ips, count.index)}"
-      user          = "${var.ssh_username}"
-      password      = "${var.ssh_password}"
-    }
     content     = "${data.template_file.docker_init.rendered}"
     destination = "/tmp/docker_init.sh"
   }
 
   provisioner "file" {
-    connection = {
-      type          = "ssh"
-      host          = "${element (var.node_ips, count.index)}"
-      user          = "${var.ssh_username}"
-      password      = "${var.ssh_password}"
-    }
     source      = "${path.module}/scripts/shared.sh"
     destination = "/tmp/shared.sh"
   }
 
 
   provisioner "file" {
-    connection = {
-      type     = "ssh"
-      host     = "${element (var.node_ips, count.index)}"
-      user     = "${var.ssh_username}"
-      password = "${var.ssh_password}"
-    }
     content     = "${data.template_file.config_dtr_minio.rendered}"
     destination = "/tmp/config_dtr_minio.sh"
   }
 
   provisioner "remote-exec" {
-    connection {
-      type = "ssh"
-      host = "${element (var.node_ips, count.index)}"
-      user = "${var.ssh_username}"
-      password = "${var.ssh_password}"
-    }
     inline = [
       <<EOT
 chmod +x /tmp/swarm_init.sh /tmp/config_dtr_minio.sh
