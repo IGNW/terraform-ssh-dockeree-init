@@ -1,7 +1,7 @@
 source $(dirname "$0")/shared.sh
 
 function wait_for_ucp_manager {
-    until $(curl -k --output /dev/null --silent --head --fail https://ucpmgr.service.consul); do
+    until $(curl -k --output /dev/null --silent --head --fail https://${ucp_url}); do
         info "Waiting for existing UCP manager to be reachable via HTTPS"
         sleep 15
     done
@@ -32,7 +32,7 @@ function ucp_join_manager {
     wait_for_ucp_manager
     info "UCP manager joining swarm"
     JOIN_TOKEN=$(curl -s $API_BASE/kv/ucp/manager_token | jq -r '.[0].Value' | base64 -d)
-    docker swarm join --token $JOIN_TOKEN ucpmgr.service.consul:2377
+    docker swarm join --token $JOIN_TOKEN ${ucp_url}:2377
     info "Registering this node as a UCP manager"
     curl -sX PUT -d '{"Name": "ucpmgr", "Port": 2377}' $API_BASE/agent/service/register
 }
@@ -41,7 +41,7 @@ function ucp_join_worker {
     wait_for_ucp_manager
     info "UCP worker joining swarm"
     JOIN_TOKEN=$(curl -s $API_BASE/kv/ucp/worker_token | jq -r '.[0].Value' | base64 -d)
-    docker swarm join --token $JOIN_TOKEN ucpmgr.service.consul:2377
+    docker swarm join --token $JOIN_TOKEN ${ucp_url}:2377
 }
 
 function swarm_wait_until_ready {
@@ -115,7 +115,7 @@ function dtr_join {
     info "Acquired DTR join lock"
 
     # Add a hosts entry so that this works before the load balancer is up
-    MGR_IP=$(dig +short ucpmgr.service.consul | head -1 | tr -d " \n")
+    MGR_IP=$(dig +short ${ucp_url} | head -1 | tr -d " \n")
 
     docker run -it --rm docker/dtr join \
         --ucp-node $HOSTNAME \
@@ -123,7 +123,7 @@ function dtr_join {
         --ucp-password '${ucp_admin_password}' \
         --existing-replica-id $REPLICA_ID \
         --ucp-insecure-tls \
-        --ucp-url https://ucpmgr.service.consul
+        --ucp-url https://${ucp_url}
 
     info "Releasing DTR join lock."
     curl -sX PUT $API_BASE/kv/dtr/join_lock?release=$SID
