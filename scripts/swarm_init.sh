@@ -53,12 +53,14 @@ if [[ $HOSTNAME =~ mgr ]]; then
 
 elif [[ $HOSTNAME =~ wrk ]]; then
     info "This is a worker node"
+    exit 0
     consul_agent_init
     swarm_wait_until_ready ucp ucp_swarm_initialized
     ucp_join_worker
 
 elif [[ $HOSTNAME =~ dtr ]]; then
     info "This is a DTR worker node"
+    exit 0
     consul_agent_init
     swarm_wait_until_ready ucp ucp_swarm_initialized
     ucp_join_worker

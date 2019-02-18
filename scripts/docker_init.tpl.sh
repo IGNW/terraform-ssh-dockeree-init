@@ -26,12 +26,16 @@ function create_ucp_swarm {
     info "Setting flag to indicate that the UCP swarm is initialized."
     curl -sX PUT -d "$HOSTNAME.node.consul" "$API_BASE/kv/ucp_swarm_initialized?release=$SID&flags=2"
     info "Registering this node as a UCP manager"
-    curl -sX PUT -d '{"Name": "ucpmgr", "Port": 2377}' $API_BASE/agent/service/register
+    # curl -sX PUT -d '{"Name": "ucpmgr", "Port": 2377}' $API_BASE/agent/service/register
+      curl -sX PUT -d '{"ips": "$ADV_IP"}' $API_BASE/kv/ucp/nodes
 }
 function ucp_join_manager {
     wait_for_ucp_manager
     info "UCP manager joining swarm"
     JOIN_TOKEN=$(curl -s $API_BASE/kv/ucp/manager_token | jq -r '.[0].Value' | base64 -d)
+    EXISTING_MANAGERS=$(curl -s $API_BASE/kv/ucp/nodes | jq -r '.[0].ips')
+    debug $EXISTING_MANAGERS
+    exit 0
     docker swarm join --token $JOIN_TOKEN ${ucp_url}:2377
     info "Registering this node as a UCP manager"
     curl -sX PUT -d '{"Name": "ucpmgr", "Port": 2377}' $API_BASE/agent/service/register
