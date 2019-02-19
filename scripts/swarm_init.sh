@@ -11,6 +11,7 @@ source $(dirname "$0")/shared.sh
 
 
 NETWORK_INTERFACE=$(ip route | grep default | sed -e "s/^.*dev.//" -e "s/.proto.*//")
+my_ip $NETWORK_INTERFACE
 
 if [[ $HOSTNAME =~ mgr ]]; then
     info "This is a manager node"
