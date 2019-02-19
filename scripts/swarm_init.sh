@@ -11,8 +11,6 @@ source $(dirname "$0")/shared.sh
 
 
 NETWORK_INTERFACE=$(ip route | grep default | sed -e "s/^.*dev.//" -e "s/.proto.*//")
-ADV_IP=$(/sbin/ip -f inet addr show dev $NETWORK_INTERFACE | grep -Po 'inet \K[\d.]+')
-info "My IP address is $ADV_IP"
 
 if [[ $HOSTNAME =~ mgr ]]; then
     info "This is a manager node"

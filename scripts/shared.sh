@@ -13,3 +13,9 @@ function info {
 function error {
   echo "$(timestamp) ERROR: $HOSTNAME $1"
 }
+
+function my_ip {
+  ADV_IP=$(/sbin/ip -f inet addr show dev $1 | grep -Po 'inet \K[\d.]+')
+  info "My name is $HOSTNAME"
+  info "My IP address is $ADV_IP"
+}

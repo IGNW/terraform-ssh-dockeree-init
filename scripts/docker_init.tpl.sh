@@ -6,6 +6,7 @@ function wait_for_ucp_manager {
         sleep 15
     done
     info "Existing UCP manager is available"
+    my_ip $NETWORK_INTERFACE
 }
 
 function create_ucp_swarm {
@@ -61,6 +62,7 @@ function swarm_wait_until_ready {
         info "$KEY FLAGS=$FLAGS"
     done
     info "$SWARM_TYPE swarm is ready"
+    my_ip $NETWORK_INTERFACE
 }
 
 function dtr_install {
