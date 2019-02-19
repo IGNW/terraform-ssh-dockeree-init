@@ -10,7 +10,8 @@ function wait_for_ucp_manager {
 }
 
 function create_ucp_swarm {
-    info "Creating UCP swarm"
+    info "Creating UCP swarm"my_ip $NETWORK_INTERFACE
+    my_ip $NETWORK_INTERFACE
     docker container run --rm -it --name ucp \
         -v /var/run/docker.sock:/var/run/docker.sock \
         docker/ucp:${ucp_version} install \
@@ -29,13 +30,14 @@ function create_ucp_swarm {
     info "Registering this node as a UCP manager"
     # curl -sX PUT -d '{"Name": "ucpmgr", "Port": 2377}' $API_BASE/agent/service/register
       curl -sX PUT -d '{"ips": "$ADV_IP"}' $API_BASE/kv/ucp/nodes
+      my_ip $NETWORK_INTERFACE
 }
 function ucp_join_manager {
     wait_for_ucp_manager
     info "UCP manager joining swarm"
     JOIN_TOKEN=$(curl -s $API_BASE/kv/ucp/manager_token | jq -r '.[0].Value' | base64 -d)
-    EXISTING_MANAGERS=$(curl -s $API_BASE/kv/ucp/nodes | jq -r '.[0].ips')
-    debug $EXISTING_MANAGERS
+    EXISTING_MANAGERS=$(curl -s $API_BASE/kv/ucp/nodes)
+    debug "Existing manager IP addresses: $EXISTING_MANAGERS"
     exit 0
     docker swarm join --token $JOIN_TOKEN ${ucp_url}:2377
     info "Registering this node as a UCP manager"
@@ -109,6 +111,7 @@ function dtr_install {
 
 function dtr_join {
     wait_for_ucp_manager
+    my_ip $NETWORK_INTERFACE
     info "Starting DTR join"
     REPLICA_ID=$(curl -s $API_BASE/kv/dtr/replica_id | jq -r '.[0].Value' | base64 -d)
     info "Retreived replace ID: $REPLICA_ID"

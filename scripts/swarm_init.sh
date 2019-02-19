@@ -97,4 +97,5 @@ elif [[ $HOSTNAME =~ dtr ]]; then
     fi
     curl -sX PUT $API_BASE/session/destroy/$SID
 fi
+my_ip $NETWORK_INTERFACE
 info "CONFIGURATION COMPLETE"
