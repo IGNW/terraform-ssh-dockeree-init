@@ -3,6 +3,7 @@
 # Further nodes are joined after the initial server/manager nodes are created.
 
 set -e
+sleep 6m
 API_BASE="http://127.0.0.1:8500/v1"
 
 source $(dirname "$0")/consul_init.sh
