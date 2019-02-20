@@ -3,7 +3,8 @@ source $(dirname "$0")/shared.sh
 function wait_for_ucp_manager {
     UCP_URL=$(curl -s $API_BASE/kv/ucp/nodes?raw=true | jq -r '.ips[0]')
     debug "Existing UCP node is at $UCP_URL"
-    until $(curl -k --output /dev/null --silent --head --fail https://$UCP_URL}); do
+
+    until $(curl -k --output /dev/null --silent --head --fail https://$UCP_URL); do
         info "Waiting for existing UCP manager to be reachable via HTTPS"
         sleep 15
     done
