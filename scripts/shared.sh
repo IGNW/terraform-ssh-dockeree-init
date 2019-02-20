@@ -17,8 +17,8 @@ function error {
 function my_ip {
   ADV_IP=$(/sbin/ip -f inet addr show dev $1 | grep -Po 'inet \K[\d.]+')
   echo "-------------------------"
-  info "My name is $HOSTNAME"
-  info "My default network is $1"
-  info "My IP address is $ADV_IP"
+  info "$(date "+%F %T") My name is $HOSTNAME"
+  info "$(date "+%F %T") My default network is $1"
+  info "$(date "+%F %T") My IP address is $ADV_IP"
   echo "-------------------------"
 }
