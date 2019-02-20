@@ -1,7 +1,9 @@
 source $(dirname "$0")/shared.sh
 
 function wait_for_ucp_manager {
-    until $(curl -k --output /dev/null --silent --head --fail https://${ucp_url}); do
+    UCP_URL=$(curl -s $API_BASE/kv/ucp/nodes?raw=true | jq -r '.ips[0]')
+    debug "Existing UCP node is at $UCP_URL"
+    until $(curl -k --output /dev/null --silent --head --fail https://$UCP_URL}); do
         info "Waiting for existing UCP manager to be reachable via HTTPS"
         sleep 15
     done
@@ -29,17 +31,15 @@ function create_ucp_swarm {
     curl -sX PUT -d "$HOSTNAME.node.consul" "$API_BASE/kv/ucp_swarm_initialized?release=$SID&flags=2"
     info "Registering this node as a UCP manager"
     # curl -sX PUT -d '{"Name": "ucpmgr", "Port": 2377}' $API_BASE/agent/service/register
-      curl -sX PUT -d '{"ips": "$ADV_IP"}' $API_BASE/kv/ucp/nodes
-      my_ip $NETWORK_INTERFACE
+    curl -sX PUT -d "{\"ips\": [\"$ADV_IP\"]}"" $API_BASE/kv/ucp/nodes
+    my_ip $NETWORK_INTERFACE
 }
+
 function ucp_join_manager {
     wait_for_ucp_manager
     info "UCP manager joining swarm"
     JOIN_TOKEN=$(curl -s $API_BASE/kv/ucp/manager_token | jq -r '.[0].Value' | base64 -d)
-    EXISTING_MANAGERS=$(curl -s $API_BASE/kv/ucp/nodes)
-    debug "Existing manager IP addresses: $EXISTING_MANAGERS"
-    exit 0
-    docker swarm join --token $JOIN_TOKEN ${ucp_url}:2377
+    docker swarm join --token $JOIN_TOKEN $UCP_URL:2377
     info "Registering this node as a UCP manager"
     curl -sX PUT -d '{"Name": "ucpmgr", "Port": 2377}' $API_BASE/agent/service/register
 }
@@ -48,7 +48,7 @@ function ucp_join_worker {
     wait_for_ucp_manager
     info "UCP worker joining swarm"
     JOIN_TOKEN=$(curl -s $API_BASE/kv/ucp/worker_token | jq -r '.[0].Value' | base64 -d)
-    docker swarm join --token $JOIN_TOKEN ${ucp_url}:2377
+    docker swarm join --token $JOIN_TOKEN $UCP_URL:2377
 }
 
 function swarm_wait_until_ready {
@@ -123,16 +123,13 @@ function dtr_join {
     done
     info "Acquired DTR join lock"
 
-    # Add a hosts entry so that this works before the load balancer is up
-    MGR_IP=$(dig +short ${ucp_url} | head -1 | tr -d " \n")
-
     docker run -it --rm docker/dtr join \
         --ucp-node $HOSTNAME \
         --ucp-username '${ucp_admin_username}' \
         --ucp-password '${ucp_admin_password}' \
         --existing-replica-id $REPLICA_ID \
         --ucp-insecure-tls \
-        --ucp-url https://${ucp_url}
+        --ucp-url https://$UCP_URL
 
     info "Releasing DTR join lock."
     curl -sX PUT $API_BASE/kv/dtr/join_lock?release=$SID
