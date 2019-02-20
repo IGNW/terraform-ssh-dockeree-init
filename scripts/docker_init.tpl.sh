@@ -30,8 +30,7 @@ function create_ucp_swarm {
     info "Setting flag to indicate that the UCP swarm is initialized."
     curl -sX PUT -d "$HOSTNAME.node.consul" "$API_BASE/kv/ucp_swarm_initialized?release=$SID&flags=2"
     info "Registering this node as a UCP manager"
-    # curl -sX PUT -d '{"Name": "ucpmgr", "Port": 2377}' $API_BASE/agent/service/register
-    curl -sX PUT -d "{\"ips\": [\"$ADV_IP\"]}"" $API_BASE/kv/ucp/nodes
+    curl -sX PUT -d "{\"ips\": [\"$ADV_IP\"]}" $API_BASE/kv/ucp/nodes
     my_ip $NETWORK_INTERFACE
 }
 
