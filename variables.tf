@@ -55,7 +55,7 @@ variable "ucp_version" {
 }
 
 variable "dtr_version" {
-  description = "Version of DTR to install"\
+  description = "Version of DTR to install"
   default = "2.6.2"
 }
 
