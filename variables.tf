@@ -34,6 +34,11 @@ variable "private_key" {
   default = ""
 }
 
+variable "bastion_host" {
+  description = "Host to use as a bastion host for SSH connection - for when target host has no public IP"
+  default = ""
+}
+
 variable "ucp_admin_username" {
   description = "User to configure as an admin on ucp"
   default = "ucpadmin"

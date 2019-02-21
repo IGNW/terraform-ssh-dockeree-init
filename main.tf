@@ -50,6 +50,7 @@ resource "null_resource" "dockeree_init"
     user          = "${var.ssh_username}"
     password      = "${var.ssh_password}"
     private_key   = "${var.private_key}"
+    bastion_host  = "${var.bastion_host}"
   }
 
   provisioner "file" {
