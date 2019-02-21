@@ -76,7 +76,7 @@ function dtr_install {
     until [ "$DTR_STATUS" -eq 0 ]; do
       info "Attempting to start DTR"
       set +e
-      docker run -it --rm  --name dtr docker/dtr install \
+      docker run -it --rm  --name dtr docker/dtr${dtr_version} install \
         --ucp-node $HOSTNAME \
         --ucp-username '${ucp_admin_username}' \
         --ucp-password '${ucp_admin_password}' \
@@ -123,7 +123,7 @@ function dtr_join {
     done
     info "Acquired DTR join lock"
 
-    docker run -it --rm docker/dtr join \
+    docker run -it --rm docker/dtr:${dtr_version} join \
         --ucp-node $HOSTNAME \
         --ucp-username '${ucp_admin_username}' \
         --ucp-password '${ucp_admin_password}' \

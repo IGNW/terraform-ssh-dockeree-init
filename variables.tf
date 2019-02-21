@@ -54,6 +54,11 @@ variable "ucp_version" {
   default = "3.0.3"
 }
 
+variable "dtr_version" {
+  description = "Version of DTR to install"\
+  default = "2.6.2"
+}
+
 variable "minio_endpoint" {
   description = "Required for DTR nodes only"
   default = ""
