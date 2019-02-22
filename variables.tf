@@ -2,9 +2,14 @@ variable "node_count" {
   description = "Number of nodes on which to run the init script"
 }
 
-variable "node_ips" {
+variable "public_ips" {
   type = "list"
-  description = "List of IPs of hosts to be initialized"
+  description = "List of public IPs to use for SSH"
+}
+
+variable "private_ips" {
+  type = "list"
+  description = "List of IPs nodes should use to talk to one another"
 }
 
 variable "resource_ids" {

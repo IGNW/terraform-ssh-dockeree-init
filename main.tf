@@ -7,7 +7,7 @@ data "template_file" "consul_init" {
 
   vars {
     node_count          = "${var.node_count}"
-    node_ips            = "${join(" ",var.node_ips)}"
+    node_ips            = "${join(" ",var.private_ips)}"
     consul_url          = "${var.ucp_url}"
     consul_secret       = "${var.consul_secret}"
   }
@@ -47,7 +47,7 @@ resource "null_resource" "dockeree_init"
 
   connection = {
     type          = "ssh"
-    host          = "${element (var.node_ips, count.index)}"
+    host          = "${element (var.public_ips, count.index)}"
     user          = "${var.ssh_username}"
     password      = "${var.ssh_password}"
     private_key   = "${var.private_key}"
