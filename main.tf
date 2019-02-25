@@ -3,7 +3,7 @@ resource "random_id" "consul_secret" {
 }
 
 data "template_file" "swarm_init" {
-  template = ${file("${path.module}/scripts/swarm_init.tpl.sh")}"
+  template = ""${file("${path.module}/scripts/swarm_init.tpl.sh")}"
 
   vars {
     node_type           = "${var.node_type}"
