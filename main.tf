@@ -2,6 +2,14 @@ resource "random_id" "consul_secret" {
   byte_length = 16
 }
 
+data "template_file" "swarm_init" {
+  template = ${file("${path.module}/scripts/swarm_init.tpl.sh")}"
+
+  vars {
+    node_type           = "${var.node_type}"
+  }
+}
+
 data "template_file" "consul_init" {
   template = "${file("${path.module}/scripts/consul_init.tpl.sh")}"
 
@@ -55,7 +63,7 @@ resource "null_resource" "dockeree_init"
   }
 
   provisioner "file" {
-    source      = "${path.module}/scripts/swarm_init.sh"
+    content     = "${data.template_file.swarm_init.rendered}"
     destination = "/tmp/swarm_init.sh"
   }
 

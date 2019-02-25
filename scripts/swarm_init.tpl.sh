@@ -13,7 +13,7 @@ source $(dirname "$0")/shared.sh
 NETWORK_INTERFACE=$(ip route | grep default | sed -e "s/^.*dev.//" -e "s/.proto.*//")
 my_ip $NETWORK_INTERFACE
 
-if [[ $HOSTNAME =~ mgr ]]; then
+if [[ ${node_type} == "mgr" ]]; then
     info "This is a manager node"
 
       consul_server_init
@@ -50,13 +50,13 @@ if [[ $HOSTNAME =~ mgr ]]; then
   fi
   curl -sX PUT $API_BASE/session/destroy/$SID
 
-elif [[ $HOSTNAME =~ wrk ]]; then
+elif [[ ${node_type} == "wrk" ]]; then
     info "This is a worker node"
     consul_agent_init
     swarm_wait_until_ready ucp ucp_swarm_initialized
     ucp_join_worker
 
-elif [[ $HOSTNAME =~ dtr ]]; then
+elif [[ ${node_type} == "dtr" ]]; then
     info "This is a DTR worker node"
     consul_agent_init
     swarm_wait_until_ready ucp ucp_swarm_initialized

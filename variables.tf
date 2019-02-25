@@ -51,7 +51,6 @@ variable "ucp_admin_username" {
 
 variable "ucp_admin_password" {
   description = "Password to configure for ucp administrator account"
-  default = "changeme1"
 }
 
 variable "ucp_version" {
