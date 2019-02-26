@@ -88,13 +88,13 @@ resource "null_resource" "dockeree_init"
     destination = "/tmp/config_dtr_minio.sh"
   }
 
-  provisioner "remote-exec" {
-    inline = [
-      <<EOT
-chmod +x /tmp/swarm_init.sh /tmp/config_dtr_minio.sh
-sudo /tmp/swarm_init.sh | tee /tmp/swarm_init.log
-EOT
-    ]
-  }
+#  provisioner "remote-exec" {
+#    inline = [
+#      <<EOT
+#chmod +x /tmp/swarm_init.sh /tmp/config_dtr_minio.sh
+#sudo /tmp/swarm_init.sh | tee /tmp/swarm_init.log
+#EOT
+#    ]
+#  }
 
 }
