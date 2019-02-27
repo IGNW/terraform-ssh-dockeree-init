@@ -13,7 +13,7 @@ function wait_for_ucp_manager {
 }
 
 function create_ucp_swarm {
-    info "Creating UCP swarm"my_ip $NETWORK_INTERFACE
+    info "Creating UCP swarm"
     my_ip $NETWORK_INTERFACE
     docker container run --rm -it --name ucp \
         -v /var/run/docker.sock:/var/run/docker.sock \
@@ -21,6 +21,7 @@ function create_ucp_swarm {
         --host-address $NETWORK_INTERFACE \
         --admin-username ${ucp_admin_username} \
         --admin-password ${ucp_admin_password} \
+        --san ${ucp_url}
 
     info "Storing manager/worker join tokens for UCP"
     MANAGER_TOKEN=$(docker swarm join-token -q manager)
@@ -114,7 +115,7 @@ function dtr_join {
     my_ip $NETWORK_INTERFACE
     info "Starting DTR join"
     REPLICA_ID=$(curl -s $API_BASE/kv/dtr/replica_id | jq -r '.[0].Value' | base64 -d)
-    info "Retreived replace ID: $REPLICA_ID"
+    info "Retrieved replica ID: $REPLICA_ID"
 
     # Ensure that only one DTR node can join at time to avoid contention.
     until [[ $(curl -sX PUT $API_BASE/kv/dtr/join_lock?acquire=$SID) == "true" ]]; do
