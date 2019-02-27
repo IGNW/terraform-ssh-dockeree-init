@@ -78,6 +78,10 @@ variable minio_secret_key {
   default = ""
 }
 
+variable consul_cluster_ip {
+  description = "IP address of a Consul manager node for cluster join"
+}
+
 variable consul_secret {
   description = "Secret key for encrypting consul communications"
 }
