@@ -28,6 +28,7 @@ data "template_file" "docker_init" {
     ucp_admin_username  = "${var.ucp_admin_username}"
     ucp_admin_password  = "${var.ucp_admin_password}"
     ucp_url             = "${var.ucp_url}"
+    dtr_url             = "${var.dtr_url}"
     ucp_version         = "${var.ucp_version}"
     dtr_version         = "${var.dtr_version}"
   }

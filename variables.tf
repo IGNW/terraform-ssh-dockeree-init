@@ -25,6 +25,10 @@ variable "ucp_url" {
   description = "URL where we can reach the UCP"
 }
 
+variable "dtr_url" {
+  description = "URL where we can reach the DTR"
+}
+
 variable "ssh_username" {
   description = "Username for connecting via ssh"
 }

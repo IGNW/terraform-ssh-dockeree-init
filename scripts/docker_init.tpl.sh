@@ -83,7 +83,7 @@ function dtr_install {
         --ucp-password '${ucp_admin_password}' \
         --ucp-insecure-tls \
         --ucp-url ${ucp_url} \
-        --dtr-external-url $ADV_IP
+        --dtr-external-url ${dtr_url}
       DTR_STATUS=$?
       set +x
       debug "DTR STATUS $DTR_STATUS"
