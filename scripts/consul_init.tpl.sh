@@ -46,7 +46,7 @@ function consul_agent_init {
     info "Initializing Consul agent - connecting to ${consul_url}"
     set -x
     docker_out="$(docker run -d --net=host --name consul \
-        consul${consul_version} agent \
+        consul:${consul_version} agent \
         -bind='0.0.0.0' \
         -advertise="$ADV_IP" \
         -data-dir='/tmp' \
