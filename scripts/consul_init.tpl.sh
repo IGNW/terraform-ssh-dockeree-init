@@ -45,17 +45,21 @@ function consul_agent_init {
     set +e
     info "Initializing Consul agent - connecting to ${consul_url}"
     set -x
-    docker_out=$(docker run -d --net=host --name consul \
+    docker_out="$(docker run -d --net=host --name consul \
         consul agent \
-        -bind="0.0.0.0" \
+        -bind='0.0.0.0' \
         -advertise="$ADV_IP" \
         -data-dir='/tmp' \
         -encrypt='${consul_secret}' \
-        -retry-join="${consul_url}")
-    debug "Finished running consul agent container"
+        -retry-join='${consul_url}' 2>&1)"
+    consul_code=$?
+    debug "Finished running consul agent container: $consul_code"
     debug "Output was: $docker_out"
+    debug "== docker ps =="
     debug $(docker ps)
+    debug "== docker ps --all =="
     debug $(docker ps --all)
+    debug "== docker logs =="
     debug $(docker logs consul)
     set -e
     set -x
