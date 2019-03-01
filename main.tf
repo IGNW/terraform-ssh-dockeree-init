@@ -16,7 +16,7 @@ data "template_file" "consul_init" {
   vars {
     node_count          = "${var.node_count}"
     node_ips            = "${join(" ",var.private_ips)}"
-    consul_version      = "${consul_version}"
+    consul_version      = "${var.consul_version}"
     consul_url          = "${var.consul_cluster_ip}"
     consul_secret       = "${var.consul_secret}"
   }
