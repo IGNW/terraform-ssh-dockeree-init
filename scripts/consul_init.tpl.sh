@@ -13,7 +13,7 @@ function consul_server_init {
     consul_prepare
     info "Initializing Consul server"
     docker run -d --net=host --name consul \
-        consul agent -server \
+        consul:${consul_version} agent -server \
         -bind="0.0.0.0" \
         -advertise="$ADV_IP" \
         -data-dir='/tmp' \
@@ -46,7 +46,7 @@ function consul_agent_init {
     info "Initializing Consul agent - connecting to ${consul_url}"
     set -x
     docker_out="$(docker run -d --net=host --name consul \
-        consul agent \
+        consul${consul_version} agent \
         -bind='0.0.0.0' \
         -advertise="$ADV_IP" \
         -data-dir='/tmp' \

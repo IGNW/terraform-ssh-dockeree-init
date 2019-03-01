@@ -67,6 +67,11 @@ variable "dtr_version" {
   default = "2.6.2"
 }
 
+variable "consul_version" {
+  description = "Version of Consul to install"
+  default = "1.4.2"
+}
+
 variable "minio_endpoint" {
   description = "Required for DTR nodes only"
   default = ""
