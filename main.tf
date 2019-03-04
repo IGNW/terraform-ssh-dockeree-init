@@ -47,7 +47,7 @@ data "template_file" "config_dtr_minio" {
   }
 }
 
-resource "null_resource" "dockeree_init"
+resource "null_resource" "dockeree_upload_scripts"
 {
   triggers {
     resource_id = "${join(",",var.resource_ids)}"
@@ -89,7 +89,24 @@ resource "null_resource" "dockeree_init"
     content     = "${data.template_file.config_dtr_minio.rendered}"
     destination = "/tmp/config_dtr_minio.sh"
   }
+}
 
+resource "null_resource" "dockeree_run_init"
+{
+  triggers {
+    resource_id = "${join(",",var.resource_ids)}"
+  }
+
+  count = "${var.node_count} * ${var.run_init}"
+
+  connection = {
+    type          = "ssh"
+    host          = "${element (var.public_ips, count.index)}"
+    user          = "${var.ssh_username}"
+    password      = "${var.ssh_password}"
+    private_key   = "${var.private_key}"
+    bastion_host  = "${var.bastion_host}"
+  }
   provisioner "remote-exec" {
     inline = [
       <<EOT

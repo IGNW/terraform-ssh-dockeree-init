@@ -94,3 +94,8 @@ variable consul_cluster_ip {
 variable consul_secret {
   description = "Secret key for encrypting consul communications"
 }
+
+variable dockeree_run_init {
+  description = "Optional argument - set to 0 to upload but not run init scripts"
+  default = "1"
+}
