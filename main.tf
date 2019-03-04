@@ -97,7 +97,7 @@ resource "null_resource" "dockeree_run_init"
     resource_id = "${join(",",var.resource_ids)}"
   }
 
-  count = "${var.node_count * $var.run_init}"
+  count = "${var.node_count * var.run_init}"
 
   connection = {
     type          = "ssh"
