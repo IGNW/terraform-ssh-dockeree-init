@@ -32,6 +32,7 @@ data "template_file" "docker_init" {
     dtr_url             = "${var.dtr_url}"
     ucp_version         = "${var.ucp_version}"
     dtr_version         = "${var.dtr_version}"
+    dockeree_license    = "${var.dockeree_license}"
   }
 }
 
@@ -84,11 +85,11 @@ resource "null_resource" "dockeree_upload_scripts"
     destination = "/tmp/shared.sh"
   }
 
-
   provisioner "file" {
     content     = "${data.template_file.config_dtr_minio.rendered}"
     destination = "/tmp/config_dtr_minio.sh"
   }
+
 }
 
 resource "null_resource" "dockeree_run_init"
@@ -97,6 +98,7 @@ resource "null_resource" "dockeree_run_init"
     resource_id = "${join(",",var.resource_ids)}"
   }
 
+  depends_on = ["null_resource.dockeree_upload_scripts"]
   count = "${var.node_count * var.run_init}"
 
   connection = {

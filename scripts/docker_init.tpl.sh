@@ -21,7 +21,9 @@ function create_ucp_swarm {
         --host-address $NETWORK_INTERFACE \
         --admin-username ${ucp_admin_username} \
         --admin-password ${ucp_admin_password} \
-        --san ${ucp_url}
+        --san ${ucp_url} \
+        --license '${dockeree_license}'
+
 
     info "Storing manager/worker join tokens for UCP"
     MANAGER_TOKEN=$(docker swarm join-token -q manager)
