@@ -82,7 +82,7 @@ function dtr_install {
         --ucp-insecure-tls \
         --ucp-url ${manager_ip} \
         --dtr-external-url ${dtr_url} \
-        --replica_id 000000000000
+        --replica-id 000000000000
       DTR_STATUS=$?
       set +x
       debug "DTR STATUS $DTR_STATUS"
