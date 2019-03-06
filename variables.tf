@@ -99,3 +99,8 @@ variable run_init {
   description = "Optional argument - set to 0 to upload but not run init scripts"
   default = "1"
 }
+
+variable dockeree_license {
+  description = "Docker Enterprise Edition license"
+  default = ""
+}
