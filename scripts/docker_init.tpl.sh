@@ -81,7 +81,8 @@ function dtr_install {
         --ucp-password '${ucp_admin_password}' \
         --ucp-insecure-tls \
         --ucp-url ${manager_ip} \
-        --dtr-external-url ${dtr_url}
+        --dtr-external-url ${dtr_url} \
+        --replica_id 000000000000
       DTR_STATUS=$?
       set +x
       debug "DTR STATUS $DTR_STATUS"
@@ -125,7 +126,7 @@ function dtr_join {
         --ucp-node $HOSTNAME \
         --ucp-username '${ucp_admin_username}' \
         --ucp-password '${ucp_admin_password}' \
-        --existing-replica-id $REPLICA_ID \
+        --existing-replica-id 000000000000 \
         --ucp-insecure-tls \
         --ucp-url https://$UCP_URL
 
