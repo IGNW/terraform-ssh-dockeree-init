@@ -80,7 +80,7 @@ function dtr_install {
         --ucp-username '${ucp_admin_username}' \
         --ucp-password '${ucp_admin_password}' \
         --ucp-insecure-tls \
-        --ucp-url ${ucp_url} \
+        --ucp-url ${manager_ip} \
         --dtr-external-url ${dtr_url}
       DTR_STATUS=$?
       set +x

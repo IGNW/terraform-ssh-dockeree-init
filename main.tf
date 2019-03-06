@@ -17,7 +17,7 @@ data "template_file" "consul_init" {
     node_count          = "${var.node_count}"
     node_ips            = "${join(" ",var.private_ips)}"
     consul_version      = "${var.consul_version}"
-    consul_url          = "${var.consul_cluster_ip}"
+    manager_ip          = "${var.manager_ip}"
     consul_secret       = "${var.consul_secret}"
   }
 }
@@ -28,6 +28,7 @@ data "template_file" "docker_init" {
   vars {
     ucp_admin_username  = "${var.ucp_admin_username}"
     ucp_admin_password  = "${var.ucp_admin_password}"
+    manager_ip          = "${var.manager_ip}"
     ucp_url             = "${var.ucp_url}"
     dtr_url             = "${var.dtr_url}"
     ucp_version         = "${var.ucp_version}"

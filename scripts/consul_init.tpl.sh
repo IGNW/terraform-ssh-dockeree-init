@@ -42,26 +42,16 @@ function wait_for_consul_leader {
 
 function consul_agent_init {
     consul_prepare
-    set +e
-    info "Initializing Consul agent - connecting to ${consul_url}"
-    set -x
+    info "Initializing Consul agent - connecting to ${manager_ip}"
     docker_out="$(docker run -d --net=host --name consul \
         consul:${consul_version} agent \
         -bind='0.0.0.0' \
         -advertise="$ADV_IP" \
         -data-dir='/tmp' \
         -encrypt='${consul_secret}' \
-        -retry-join='${consul_url}' 2>&1)"
+        -retry-join='${manager_ip}' 2>&1)"
     consul_code=$?
-    debug "Finished running consul agent container: $consul_code"
-    debug "Output was: $docker_out"
-    debug "== docker ps =="
-    debug $(docker ps)
-    debug "== docker ps --all =="
-    debug $(docker ps --all)
-    debug "== docker logs =="
-    debug $(docker logs consul)
-    set -e
-    set -x
+    debug "$docker_out"
+
     wait_for_consul_leader
 }
