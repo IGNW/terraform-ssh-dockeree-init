@@ -9,12 +9,10 @@ function wait_for_ucp_manager {
         sleep 15
     done
     info "Existing UCP manager is available"
-    my_ip $NETWORK_INTERFACE
 }
 
 function create_ucp_swarm {
     info "Creating UCP swarm"
-    my_ip $NETWORK_INTERFACE
     docker container run --rm -it --name ucp \
         -v /var/run/docker.sock:/var/run/docker.sock \
         docker/ucp:${ucp_version} install \
@@ -35,7 +33,6 @@ function create_ucp_swarm {
     curl -sX PUT -d "$HOSTNAME.node.consul" "$API_BASE/kv/ucp_swarm_initialized?release=$SID&flags=2"
     info "Registering this node as a UCP manager"
     curl -sX PUT -d "{\"ips\": [\"$ADV_IP\"]}" $API_BASE/kv/ucp/nodes
-    my_ip $NETWORK_INTERFACE
 }
 
 function ucp_join_manager {
@@ -67,7 +64,6 @@ function swarm_wait_until_ready {
         info "$KEY FLAGS=$FLAGS"
     done
     info "$SWARM_TYPE swarm is ready"
-    my_ip $NETWORK_INTERFACE
 }
 
 function dtr_install {
@@ -114,11 +110,10 @@ function dtr_install {
 
 function dtr_join {
     wait_for_ucp_manager
-    my_ip $NETWORK_INTERFACE
     info "Starting DTR join"
     REPLICA_ID=$(curl -s $API_BASE/kv/dtr/replica_id | jq -r '.[0].Value' | base64 -d)
     info "Retrieved replica ID: $REPLICA_ID"
-
+    debug "SID=$SID"
     # Ensure that only one DTR node can join at time to avoid contention.
     until [[ $(curl -sX PUT $API_BASE/kv/dtr/join_lock?acquire=$SID) == "true" ]]; do
         info "Waiting to acquire DTR join lock"
