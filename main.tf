@@ -116,7 +116,7 @@ resource "null_resource" "dockeree_run_init"
       <<EOT
 chmod +x /tmp/swarm_init.sh /tmp/config_dtr_minio.sh
 # sudo /tmp/swarm_init.sh | tee /tmp/swarm_init.log
-echo "${var.ssh_password}" | sudo -S -E /tmp/swarm_init.sh | tee /tmp/swarm_init.log
+echo "${var.ssh_password}" | sudo -S -E ${var.script_path}/swarm_init.sh | tee ${var.script_path}/swarm_init.log
 EOT
     ]
   }
