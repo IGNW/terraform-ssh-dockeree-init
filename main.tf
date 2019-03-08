@@ -68,27 +68,27 @@ resource "null_resource" "dockeree_upload_scripts"
 
   provisioner "file" {
     content     = "${data.template_file.swarm_init.rendered}"
-    destination = "/tmp/swarm_init.sh"
+    destination = "${var.script_path}/swarm_init.sh"
   }
 
   provisioner "file" {
     content     = "${data.template_file.consul_init.rendered}"
-    destination = "/tmp/consul_init.sh"
+    destination = "${var.script_path}/consul_init.sh"
   }
 
   provisioner "file" {
     content     = "${data.template_file.docker_init.rendered}"
-    destination = "/tmp/docker_init.sh"
+    destination = "${var.script_path}/docker_init.sh"
   }
 
   provisioner "file" {
     source      = "${path.module}/scripts/shared.sh"
-    destination = "/tmp/shared.sh"
+    destination = "${var.script_path}/shared.sh"
   }
 
   provisioner "file" {
     content     = "${data.template_file.config_dtr_minio.rendered}"
-    destination = "/tmp/config_dtr_minio.sh"
+    destination = "${var.script_path}/config_dtr_minio.sh"
   }
 
 }
@@ -109,7 +109,7 @@ resource "null_resource" "dockeree_run_init"
     password      = "${var.ssh_password}"
     private_key   = "${var.private_key}"
     bastion_host  = "${var.bastion_host}"
-    script_path   = "${var.script_path}"
+    script_path   = "${var.script_path}/terraform"
   }
   provisioner "remote-exec" {
     inline = [
