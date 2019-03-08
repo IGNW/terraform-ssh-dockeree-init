@@ -109,7 +109,7 @@ resource "null_resource" "dockeree_run_init"
     password      = "${var.ssh_password}"
     private_key   = "${var.private_key}"
     bastion_host  = "${var.bastion_host}"
-    script_path   = "${var.script_path}/terraform"
+    script_path   = "${var.script_path}/terraform_exec"
   }
   provisioner "remote-exec" {
     inline = [
