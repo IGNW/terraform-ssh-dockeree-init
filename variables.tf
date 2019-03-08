@@ -105,3 +105,8 @@ variable dockeree_license {
   description = "Docker Enterprise Edition license"
   default = ""
 }
+
+variable script_path {
+  description = "Path on VM where we will upload and execute inline exec scripts"
+  default = "/tmp"
+}
