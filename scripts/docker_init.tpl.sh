@@ -103,10 +103,6 @@ function dtr_install {
     debug "Marking swarm initialization as complete in KV"
     curl -sX PUT -d "$HOSTNAME.node.consul" "$API_BASE/kv/dtr_swarm_initialized?release=$SID&flags=2"
     info "Finished initializing the DTR swarm"
-
-    info "Applying Minio config"
-    /tmp/config_dtr_minio.sh 2>&1
-    debug "Done applying minio config"
 }
 
 function dtr_join {

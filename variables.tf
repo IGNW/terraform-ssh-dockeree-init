@@ -73,21 +73,6 @@ variable "consul_version" {
   default = "1.4.2"
 }
 
-variable "minio_endpoint" {
-  description = "Required for DTR nodes only"
-  default = ""
-}
-
-variable "minio_access_key" {
-  description = "Required for DTR nodes only"
-  default = ""
-}
-
-variable minio_secret_key {
-  description = "Required for DTR nodes only"
-  default = ""
-}
-
 variable manager_ip {
   description = "IP address of a manager node for cluster join operations"
 }

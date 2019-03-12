@@ -37,18 +37,6 @@ data "template_file" "docker_init" {
   }
 }
 
-data "template_file" "config_dtr_minio" {
-  template = "${file("${path.module}/scripts/config_dtr_minio.tpl.py")}"
-
-  vars {
-    ucp_admin_username  = "${var.ucp_admin_username}"
-    ucp_admin_password  = "${var.ucp_admin_password}"
-    minio_endpoint      = "${var.minio_endpoint}"
-    minio_access_key    = "${var.minio_access_key}"
-    minio_secret_key    = "${var.minio_secret_key}"
-  }
-}
-
 resource "null_resource" "dockeree_upload_scripts"
 {
   triggers {
@@ -85,12 +73,7 @@ resource "null_resource" "dockeree_upload_scripts"
     source      = "${path.module}/scripts/shared.sh"
     destination = "${var.script_path}/shared.sh"
   }
-
-  provisioner "file" {
-    content     = "${data.template_file.config_dtr_minio.rendered}"
-    destination = "${var.script_path}/config_dtr_minio.sh"
-  }
-
+  
 }
 
 resource "null_resource" "dockeree_run_init"
@@ -114,7 +97,7 @@ resource "null_resource" "dockeree_run_init"
   provisioner "remote-exec" {
     inline = [
       <<EOT
-chmod +x ${var.script_path}/swarm_init.sh ${var.script_path}/config_dtr_minio.sh
+chmod +x ${var.script_path}/swarm_init.sh
 echo "${var.ssh_password}" | sudo -S -E ${var.script_path}/swarm_init.sh | tee ${var.script_path}/swarm_init.log
 EOT
     ]
