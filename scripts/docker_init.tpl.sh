@@ -13,7 +13,7 @@ function wait_for_ucp_manager {
 
 function create_ucp_swarm {
     info "Creating UCP swarm"
-    docker container run --rm -it --name ucp \
+    docker container run -it --name ucp \
         -v /var/run/docker.sock:/var/run/docker.sock \
         docker/ucp:${ucp_version} install \
         --host-address $NETWORK_INTERFACE \
@@ -75,7 +75,7 @@ function dtr_install {
     until [ "$DTR_STATUS" -eq 0 ]; do
       info "Attempting to start DTR"
       set +e
-      docker run -it --rm  --name dtr docker/dtr:${dtr_version} install \
+      docker run -it  --name dtr docker/dtr:${dtr_version} install \
         --ucp-node $HOSTNAME \
         --ucp-username '${ucp_admin_username}' \
         --ucp-password '${ucp_admin_password}' \
@@ -118,7 +118,7 @@ function dtr_join {
     done
     info "Acquired DTR join lock"
 
-    docker run -it --rm docker/dtr:${dtr_version} join \
+    docker run -it docker/dtr:${dtr_version} join \
         --ucp-node $HOSTNAME \
         --ucp-username '${ucp_admin_username}' \
         --ucp-password '${ucp_admin_password}' \
