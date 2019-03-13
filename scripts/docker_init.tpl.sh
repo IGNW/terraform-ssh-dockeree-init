@@ -33,6 +33,8 @@ function create_ucp_swarm {
     info "Storing manager/worker join tokens for UCP"
     MANAGER_TOKEN=$(docker swarm join-token -q manager)
     WORKER_TOKEN=$(docker swarm join-token -q worker)
+    debug "MANAGER TOKEN: $MANAGER_TOKEN"
+    debug "WORKER TOKEN:  $WORKER_TOKEN"
     curl -sX PUT -d "$MANAGER_TOKEN" $API_BASE/kv/ucp/manager_token
     curl -sX PUT -d "$WORKER_TOKEN" $API_BASE/kv/ucp/worker_token
 
@@ -125,7 +127,7 @@ function dtr_join {
     done
     info "Acquired DTR join lock"
 
-    docker run -it docker/dtr:${dtr_version} join \
+    docker run -d docker/dtr:${dtr_version} join \
         --ucp-node $HOSTNAME \
         --ucp-username '${ucp_admin_username}' \
         --ucp-password '${ucp_admin_password}' \
