@@ -13,7 +13,7 @@ function wait_for_ucp_manager {
 
 function create_ucp_swarm {
     info "Creating UCP swarm"
-    docker container run -it --name ucp \
+    docker_out="$(docker container run -it --name ucp \
         -v /var/run/docker.sock:/var/run/docker.sock \
         docker/ucp:${ucp_version} install \
         --host-address $NETWORK_INTERFACE \
