@@ -13,6 +13,8 @@ function wait_for_ucp_manager {
 
 function create_ucp_swarm {
     info "Creating UCP swarm"
+    set -x
+    set +e
     docker_out="$(docker container run -it --name ucp \
         -v /var/run/docker.sock:/var/run/docker.sock \
         docker/ucp:${ucp_version} install \
@@ -21,7 +23,12 @@ function create_ucp_swarm {
         --admin-password ${ucp_admin_password} \
         --san ${ucp_url} \
         --license '${dockeree_license}' 2>&1)"
+    UCP_STATUS=$?
+    debug "UCP status: $UCP_STATUS"
     debug "$docker_out"
+    if [ UCP_STATUS -ne 0 ]; then
+      exit 1
+    fi
 
     info "Storing manager/worker join tokens for UCP"
     MANAGER_TOKEN=$(docker swarm join-token -q manager)
