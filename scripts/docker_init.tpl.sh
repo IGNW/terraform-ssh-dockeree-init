@@ -15,7 +15,7 @@ function create_ucp_swarm {
     info "Creating UCP swarm"
     set -x
     set +e
-    docker_out="$(docker container run -it --name ucp \
+    docker_out="$(docker container run -d --name ucp \
         -v /var/run/docker.sock:/var/run/docker.sock \
         docker/ucp:${ucp_version} install \
         --host-address $NETWORK_INTERFACE \
@@ -26,7 +26,7 @@ function create_ucp_swarm {
     UCP_STATUS=$?
     debug "UCP status: $UCP_STATUS"
     debug "$docker_out"
-    if [ UCP_STATUS -ne 0 ]; then
+    if [ $UCP_STATUS -ne 0 ]; then
       exit 1
     fi
 
@@ -82,7 +82,7 @@ function dtr_install {
     until [ "$DTR_STATUS" -eq 0 ]; do
       info "Attempting to start DTR"
       set +e
-      docker_out="$(docker run -it  --name dtr docker/dtr:${dtr_version} install \
+      docker_out="$(docker run -d --name dtr docker/dtr:${dtr_version} install \
         --ucp-node $HOSTNAME \
         --ucp-username '${ucp_admin_username}' \
         --ucp-password '${ucp_admin_password}' \
