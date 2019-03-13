@@ -31,8 +31,8 @@ function create_ucp_swarm {
     fi
 
     info "Storing manager/worker join tokens for UCP"
-    MANAGER_TOKEN=$(docker swarm join-token -q manager)
-    WORKER_TOKEN=$(docker swarm join-token -q worker)
+    MANAGER_TOKEN=$(docker swarm join-token -q manager 2>&1)
+    WORKER_TOKEN=$(docker swarm join-token -q worker 2>&1)
     debug "MANAGER TOKEN: $MANAGER_TOKEN"
     debug "WORKER TOKEN:  $WORKER_TOKEN"
     curl -sX PUT -d "$MANAGER_TOKEN" $API_BASE/kv/ucp/manager_token
