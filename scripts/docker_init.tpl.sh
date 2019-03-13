@@ -20,8 +20,8 @@ function create_ucp_swarm {
         --admin-username ${ucp_admin_username} \
         --admin-password ${ucp_admin_password} \
         --san ${ucp_url} \
-        --license '${dockeree_license}'
-
+        --license '${dockeree_license}' 2>&1)"
+    debug "$docker_out"
 
     info "Storing manager/worker join tokens for UCP"
     MANAGER_TOKEN=$(docker swarm join-token -q manager)
@@ -75,16 +75,16 @@ function dtr_install {
     until [ "$DTR_STATUS" -eq 0 ]; do
       info "Attempting to start DTR"
       set +e
-      docker run -it  --name dtr docker/dtr:${dtr_version} install \
+      docker_out="$(docker run -it  --name dtr docker/dtr:${dtr_version} install \
         --ucp-node $HOSTNAME \
         --ucp-username '${ucp_admin_username}' \
         --ucp-password '${ucp_admin_password}' \
         --ucp-insecure-tls \
         --ucp-url ${manager_ip} \
         --dtr-external-url ${dtr_url} \
-        --replica-id 000000000000
+        --replica-id 000000000000 2>&1)"
       DTR_STATUS=$?
-      set +x
+      debug "$docker_out"
       debug "DTR STATUS $DTR_STATUS"
       if [ "$DTR_STATUS" -ne 0 ]; then
         DTR_ATTEMPTS=$((DTR_ATTEMPTS + 1))
