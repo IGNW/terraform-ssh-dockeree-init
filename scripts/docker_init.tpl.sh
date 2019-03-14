@@ -94,7 +94,7 @@ function dtr_install {
     until [ "$DTR_STATUS" -eq 0 ]; do
       info "Attempting to start DTR"
       set +e
-      docker_out="$(docker run -d --name dtr docker/dtr:${dtr_version} install \
+      docker_out="$(docker run -d --name dtr --restart always docker/dtr:${dtr_version} install \
         --ucp-node $HOSTNAME \
         --ucp-username '${ucp_admin_username}' \
         --ucp-password '${ucp_admin_password}' \
