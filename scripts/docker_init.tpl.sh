@@ -2,7 +2,7 @@ source $(dirname "$0")/shared.sh
 
 function wait_for_ucp_manager {
     debug "Now I am going to wait_for_ucp_manager"
-    // Query the KV store for the IP address of one node registered as a manager
+    # Query the KV store for the IP address of one node registered as a manager
     set -x
     MANAGER_IP="$(curl -s $API_BASE/kv/ucp/nodes?raw=true | jq -r '.ips[0]')"
     set +x
