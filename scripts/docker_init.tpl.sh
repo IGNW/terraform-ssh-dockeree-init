@@ -24,7 +24,7 @@ function create_ucp_swarm {
         --host-address $NETWORK_INTERFACE \
         --admin-username ${ucp_admin_username} \
         --admin-password ${ucp_admin_password} \
-        --san ${ucp_url} \
+        --san '${ucp_url}' \
         --license '${dockeree_license}' 2>&1)"
     UCP_STATUS=$?
     set -e
@@ -99,8 +99,8 @@ function dtr_install {
         --ucp-username '${ucp_admin_username}' \
         --ucp-password '${ucp_admin_password}' \
         --ucp-insecure-tls \
-        --ucp-url ${ucp_url} \
-        --dtr-external-url ${dtr_url} \
+        --ucp-url '${ucp_url}' \
+        --dtr-external-url '${dtr_url}' \
         --replica-id  $REPLICA_ID 2>&1)"
       DTR_STATUS=$?
       debug "$docker_out"
