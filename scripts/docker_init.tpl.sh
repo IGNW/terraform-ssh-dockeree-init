@@ -1,8 +1,11 @@
 source $(dirname "$0")/shared.sh
 
 function wait_for_ucp_manager {
+    debug "Now I am going to wait_for_ucp_manager"
     // Query the KV store for the IP address of one node registered as a manager
+    set -x
     MANAGER_IP="$(curl -s $API_BASE/kv/ucp/nodes?raw=true | jq -r '.ips[0]')"
+    set +x
     debug "Found a UCP manager at $MANAGER_IP"
 
     until $(curl -k --output /dev/null --silent --head --fail https://$MANAGER_IP); do
@@ -33,6 +36,8 @@ function create_ucp_swarm {
 
     info "Registering this node as a UCP manager"
     curl -sX PUT -d "{\"ips\": [\"$ADV_IP\"]}" $API_BASE/kv/ucp/nodes
+    debug "Ok, I'm done registering"
+
 
     wait_for_ucp_manager
     info "Storing manager/worker join tokens for UCP"
