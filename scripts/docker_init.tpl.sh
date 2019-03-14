@@ -30,6 +30,10 @@ function create_ucp_swarm {
       exit 1
     fi
 
+    info "Registering this node as a UCP manager"
+    curl -sX PUT -d "{\"ips\": [\"$ADV_IP\"]}" $API_BASE/kv/ucp/nodes
+    
+    wait_for_ucp_manager
     info "Storing manager/worker join tokens for UCP"
     MANAGER_TOKEN=$(docker swarm join-token -q manager 2>&1)
     WORKER_TOKEN=$(docker swarm join-token -q worker 2>&1)
@@ -40,8 +44,7 @@ function create_ucp_swarm {
 
     info "Setting flag to indicate that the UCP swarm is initialized."
     curl -sX PUT -d "$HOSTNAME.node.consul" "$API_BASE/kv/ucp_swarm_initialized?release=$SID&flags=2"
-    info "Registering this node as a UCP manager"
-    curl -sX PUT -d "{\"ips\": [\"$ADV_IP\"]}" $API_BASE/kv/ucp/nodes
+
 }
 
 function ucp_join_manager {
