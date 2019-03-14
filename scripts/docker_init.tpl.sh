@@ -1,7 +1,7 @@
 source $(dirname "$0")/shared.sh
 
 function wait_for_ucp_manager {
-    UCP_URL=$(curl -s $API_BASE/kv/ucp/nodes?raw=true | jq -r '.ips[0]')
+    UCP_URL="https://$(curl -s $API_BASE/kv/ucp/nodes?raw=true | jq -r '.ips[0]')"
     debug "Existing UCP node is at $UCP_URL"
 
     until $(curl -k --output /dev/null --silent --head --fail https://$UCP_URL); do
@@ -32,7 +32,7 @@ function create_ucp_swarm {
 
     info "Registering this node as a UCP manager"
     curl -sX PUT -d "{\"ips\": [\"$ADV_IP\"]}" $API_BASE/kv/ucp/nodes
-    
+
     wait_for_ucp_manager
     info "Storing manager/worker join tokens for UCP"
     MANAGER_TOKEN=$(docker swarm join-token -q manager 2>&1)
