@@ -1,19 +1,19 @@
 source $(dirname "$0")/shared.sh
 
 function wait_for_ucp_manager {
-    UCP_URL="https://$(curl -s $API_BASE/kv/ucp/nodes?raw=true | jq -r '.ips[0]')"
-    debug "Existing UCP node is at $UCP_URL"
+    // Query the KV store for the IP address of one node registered as a manager
+    MANAGER_IP="$(curl -s $API_BASE/kv/ucp/nodes?raw=true | jq -r '.ips[0]')"
+    debug "Found a UCP manager at $MANAGER_IP"
 
-    until $(curl -k --output /dev/null --silent --head --fail $UCP_URL); do
-        info "Waiting for existing UCP manager to be reachable via HTTPS"
+    until $(curl -k --output /dev/null --silent --head --fail https://$MANAGER_IP); do
+        info "Waiting for the UCP manager to be reachable via HTTPS"
         sleep 15
     done
-    info "Existing UCP manager is available"
+    info "UCP manager is available"
 }
 
 function create_ucp_swarm {
     info "Creating UCP swarm"
-    set -x
     set +e
     docker_out="$(docker container run -d --name ucp \
         -v /var/run/docker.sock:/var/run/docker.sock \
@@ -24,6 +24,7 @@ function create_ucp_swarm {
         --san ${ucp_url} \
         --license '${dockeree_license}' 2>&1)"
     UCP_STATUS=$?
+    set -e
     debug "UCP status: $UCP_STATUS"
     debug "$docker_out"
     if [ $UCP_STATUS -ne 0 ]; then
@@ -51,7 +52,7 @@ function ucp_join_manager {
     wait_for_ucp_manager
     info "UCP manager joining swarm"
     JOIN_TOKEN=$(curl -s $API_BASE/kv/ucp/manager_token | jq -r '.[0].Value' | base64 -d)
-    docker swarm join --token $JOIN_TOKEN $UCP_URL:2377
+    docker swarm join --token $JOIN_TOKEN $MANAGER_IP:2377
     info "Registering this node as a UCP manager"
     curl -sX PUT -d '{"Name": "ucpmgr", "Port": 2377}' $API_BASE/agent/service/register
 }
@@ -60,7 +61,7 @@ function ucp_join_worker {
     wait_for_ucp_manager
     info "UCP worker joining swarm"
     JOIN_TOKEN=$(curl -s $API_BASE/kv/ucp/worker_token | jq -r '.[0].Value' | base64 -d)
-    docker swarm join --token $JOIN_TOKEN $UCP_URL:2377
+    docker swarm join --token $JOIN_TOKEN $MANAGER_IP:2377
 }
 
 function swarm_wait_until_ready {
@@ -71,7 +72,7 @@ function swarm_wait_until_ready {
     info "$KEY FLAGS=$FLAGS"
     while [[ "$FLAGS" != "2" ]]; do
         info "Waiting for $SWARM_TYPE swarm to be ready for join"
-        sleep 15
+        sleep 30
         FLAGS=$(curl -s $API_BASE/kv/$KEY | jq -r '.[0].Flags')
         info "$KEY FLAGS=$FLAGS"
     done
@@ -84,6 +85,7 @@ function dtr_install {
     sleep 30
     DTR_STATUS=1
     DTR_ATTEMPTS=0
+    REPLICA_ID="000000000000"
     until [ "$DTR_STATUS" -eq 0 ]; do
       info "Attempting to start DTR"
       set +e
@@ -92,9 +94,9 @@ function dtr_install {
         --ucp-username '${ucp_admin_username}' \
         --ucp-password '${ucp_admin_password}' \
         --ucp-insecure-tls \
-        --ucp-url ${manager_ip} \
+        --ucp-url ${ucp_url} \
         --dtr-external-url ${dtr_url} \
-        --replica-id 000000000000 2>&1)"
+        --replica-id  $REPLICA_ID 2>&1)"
       DTR_STATUS=$?
       debug "$docker_out"
       debug "DTR STATUS $DTR_STATUS"
@@ -136,7 +138,7 @@ function dtr_join {
         --ucp-password '${ucp_admin_password}' \
         --existing-replica-id 000000000000 \
         --ucp-insecure-tls \
-        --ucp-url https://$UCP_URL
+        --ucp-url ${ucp_url}
 
     info "Releasing DTR join lock."
     curl -sX PUT $API_BASE/kv/dtr/join_lock?release=$SID
