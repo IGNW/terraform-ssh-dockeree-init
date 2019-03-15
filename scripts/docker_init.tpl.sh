@@ -66,7 +66,13 @@ function ucp_join_worker {
     wait_for_ucp_manager
     info "UCP worker joining swarm"
     JOIN_TOKEN=$(curl -s $API_BASE/kv/ucp/worker_token | jq -r '.[0].Value' | base64 -d)
-    docker swarm join --token $JOIN_TOKEN $MANAGER_IP:2377
+    debug "JOIN_TOKEN: $JOIN_TOKEN"
+    debug "MANAGER_IP: $MANAGER_IP"
+    set +e
+    JOIN_OUTPUT="$(docker swarm join --token $JOIN_TOKEN $MANAGER_IP:2377 2>&1)"
+    JOIN_RESULT="$?"
+    set -e
+    debug "$JOIN_RESULT: $JOIN_OUTPUT"
 }
 
 function swarm_wait_until_ready {
