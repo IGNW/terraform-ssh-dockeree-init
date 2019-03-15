@@ -137,7 +137,7 @@ function dtr_join {
     done
     info "Acquired DTR join lock"
 
-    docker run -d docker/dtr:${dtr_version} join \
+    docker run -d --name dtr --restart on-failure docker/dtr:${dtr_version} join \
         --ucp-node $HOSTNAME \
         --ucp-username '${ucp_admin_username}' \
         --ucp-password '${ucp_admin_password}' \
