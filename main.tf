@@ -98,7 +98,7 @@ resource "null_resource" "dockeree_run_init"
     inline = [
       <<EOT
 chmod +x ${var.script_path}/swarm_init.sh
-echo "${var.ssh_password}" | sudo -S ${var.script_path}/swarm_init.sh | tee ${var.script_path}/swarm_init.log
+echo "${var.ssh_password}" | sudo -E -S ${var.script_path}/swarm_init.sh | tee ${var.script_path}/swarm_init.log
 EOT
     ]
   }

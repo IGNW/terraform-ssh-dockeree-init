@@ -13,6 +13,15 @@ source $(dirname "$0")/shared.sh
 NETWORK_INTERFACE=$(ip route | grep default | sed -e "s/^.*dev.//" -e "s/.proto.*//")
 my_ip $NETWORK_INTERFACE
 
+debug "----------------------"
+debug "https_proxy: $http_proxy"
+debug "HTTPS_PROXY: $HTTPS_PROXY"
+debug "http_proxy: $http_proxy"
+debug "HTTP_PROXY: $HTTP_PROXY"
+debug "no_proxy: $no_proxy"
+debug "NO_PROXY: $NO_PROXY"
+debug "----------------------"
+
 if [[ ${node_type} == "mgr" ]]; then
     info "This is a manager node"
 
@@ -95,5 +104,4 @@ elif [[ ${node_type} == "dtr" ]]; then
     fi
     curl -sX PUT $API_BASE/session/destroy/$SID
 fi
-my_ip $NETWORK_INTERFACE
 info "CONFIGURATION COMPLETE"
