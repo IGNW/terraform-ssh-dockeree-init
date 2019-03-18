@@ -59,7 +59,7 @@ function ucp_join_manager {
     JOIN_TOKEN=$(curl -s $API_BASE/kv/ucp/manager_token | jq -r '.[0].Value' | base64 -d)
     debug "JOIN_TOKEN: $JOIN_TOKEN"
     set +e
-    JOIN_OUTPUT=$(docker swarm join --token $JOIN_TOKEN $MANAGER_IP:2377 2>&1)
+    JOIN_OUTPUT=$(docker swarm join --token $JOIN_TOKEN --advertise-addr $ADV_IP $MANAGER_IP:2377 2>&1)
     JOIN_RESULT="$?"
     set -e
     debug "Join result: $JOIN_RESULT: $JOIN_OUTPUT"
