@@ -73,7 +73,7 @@ resource "null_resource" "dockeree_upload_scripts"
     source      = "${path.module}/scripts/shared.sh"
     destination = "${var.script_path}/shared.sh"
   }
-  
+
 }
 
 resource "null_resource" "dockeree_run_init"
@@ -98,7 +98,7 @@ resource "null_resource" "dockeree_run_init"
     inline = [
       <<EOT
 chmod +x ${var.script_path}/swarm_init.sh
-echo "${var.ssh_password}" | sudo -S -E ${var.script_path}/swarm_init.sh | tee ${var.script_path}/swarm_init.log
+echo "${var.ssh_password}" | sudo -S ${var.script_path}/swarm_init.sh | tee ${var.script_path}/swarm_init.log
 EOT
     ]
   }
