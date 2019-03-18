@@ -58,8 +58,11 @@ function ucp_join_manager {
     info "UCP manager joining swarm"
     JOIN_TOKEN=$(curl -s $API_BASE/kv/ucp/manager_token | jq -r '.[0].Value' | base64 -d)
     debug "JOIN_TOKEN: $JOIN_TOKEN"
+    set +e
     JOIN_OUTPUT=$(docker swarm join --token $JOIN_TOKEN $MANAGER_IP:2377 2>&1)
-    debug "docker swarm join:  $JOIN_OUTPUT"
+    JOIN_RESULT="$?"
+    set -e
+    debug "Join result: $JOIN_RESULT: $JOIN_OUTPUT"
     info "Registering this node as a UCP manager"
     curl -sX PUT -d '{"Name": "ucpmgr", "Port": 2377}' $API_BASE/agent/service/register
 }
@@ -71,10 +74,12 @@ function ucp_join_worker {
     debug "JOIN_TOKEN: $JOIN_TOKEN"
     debug "MANAGER_IP: $MANAGER_IP"
     set +e
+    set -x
     JOIN_OUTPUT="$(docker swarm join --token $JOIN_TOKEN $MANAGER_IP:2377 2>&1)"
     JOIN_RESULT="$?"
+    set +x
     set -e
-    debug "$JOIN_RESULT: $JOIN_OUTPUT"
+    debug "Join result: $JOIN_RESULT: $JOIN_OUTPUT"
 }
 
 function swarm_wait_until_ready {
