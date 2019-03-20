@@ -95,3 +95,8 @@ variable script_path {
   description = "Path on VM where we will upload and execute inline exec scripts"
   default = "/tmp"
 }
+
+variable "dtr_nfs_url" {
+  description = "URL of a nfs share to use for DTR storage"
+  default = ""
+}

@@ -114,6 +114,7 @@ function dtr_install {
         --ucp-insecure-tls \
         --ucp-url '${ucp_url}' \
         --dtr-external-url '${dtr_url}' \
+        --nfs-storage-url '${dtr_nfs_url}' \
         --replica-id  $REPLICA_ID 2>&1)"
       DTR_STATUS=$?
       debug "$docker_out"

@@ -34,6 +34,7 @@ data "template_file" "docker_init" {
     ucp_version         = "${var.ucp_version}"
     dtr_version         = "${var.dtr_version}"
     dockeree_license    = "${var.dockeree_license}"
+    dtr_nfs_url         = "${var.dtr_nfs_url}"
   }
 }
 
