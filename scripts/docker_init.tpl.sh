@@ -104,21 +104,25 @@ function dtr_install {
     DTR_STATUS=1
     DTR_ATTEMPTS=0
     REPLICA_ID="000000000000"
-    until [ "$DTR_STATUS" -eq 0 ]; do
-      info "Attempting to start DTR"
-      set +e
-      docker_out="$(docker run -d --name dtr --restart on-failure docker/dtr:${dtr_version} install \
+
+    DTR_COMMANAD = "docker run -d --name dtr --restart on-failure docker/dtr:${dtr_version} install \
         --ucp-node $HOSTNAME \
         --ucp-username '${ucp_admin_username}' \
         --ucp-password '${ucp_admin_password}' \
         --ucp-insecure-tls \
         --ucp-url '${ucp_url}' \
-        --dtr-external-url '${dtr_url}' \
-        --nfs-storage-url '${dtr_nfs_url}' \
-        --replica-id  $REPLICA_ID 2>&1)"
+        --replica-id  $REPLICA_ID "
+
+    if [ "${dtr_storage_type}" == "nfs" ]; then
+      DTR_COMMAND = "$DTR_COMMAND --dtr-external-url '${dtr_url}'"
+    fi
+
+    until [ "$DTR_STATUS" -eq 0 ]; do
+        info "Attempting to start DTR"
+      set +e
+      DTR_OUTPUT="$($DTR_COMMAND 2>&1)"
       DTR_STATUS=$?
-      debug "$docker_out"
-      debug "DTR STATUS $DTR_STATUS"
+      debug "$DTR_STATUS : $DTR_OUTPUT"
       if [ "$DTR_STATUS" -ne 0 ]; then
         DTR_ATTEMPTS=$((DTR_ATTEMPTS + 1))
         if [ $DTR_ATTEMPTS -gt 10 ]; then

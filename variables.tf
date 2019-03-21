@@ -100,3 +100,8 @@ variable "dtr_nfs_url" {
   description = "URL of a nfs share to use for DTR storage"
   default = ""
 }
+
+variable "dtr_storage_type" {
+  description = "Type of DTR storage - one of nfs, s3"
+  default = "volume"
+}
