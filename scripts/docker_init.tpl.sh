@@ -1,7 +1,7 @@
 source $(dirname "$0")/shared.sh
 
 function wait_for_ucp_manager {
-    debug "Now I am going to wait_for_ucp_manager"
+    debug "Looking up UCP manager address"
     # Query the KV store for the IP address of one node registered as a manager
     set -x
     MANAGER_IP="$(curl -s $API_BASE/kv/ucp/nodes?raw=true | jq -r '.ips[0]')"
@@ -98,25 +98,13 @@ function swarm_wait_until_ready {
 }
 
 function dtr_install {
-    wait_for_ucp_manager
-
-    sleep 30
     DTR_STATUS=1
     DTR_ATTEMPTS=0
     REPLICA_ID="000000000000"
 
-    DTR_COMMANAD = "docker run -d --name dtr --restart on-failure docker/dtr:${dtr_version} install \
-        --ucp-node $HOSTNAME \
-        --ucp-username '${ucp_admin_username}' \
-        --ucp-password '${ucp_admin_password}' \
-        --ucp-insecure-tls \
-        --ucp-url '${ucp_url}' \
-        --replica-id  $REPLICA_ID "
-
-      until [ "$DTR_STATUS" -eq 0 ]; do
-        info "Attempting to start DTR"
-      set +e
-      DTR_OUTPUT="$($DTR_COMMAND 2>&1)"
+    until [ "$DTR_STATUS" -eq 0 ]; do
+      info "Attempting to start DTR"
+      DTR_OUTPUT="$(start_dtr)"
       DTR_STATUS=$?
       debug "$DTR_STATUS : $DTR_OUTPUT"
       if [ "$DTR_STATUS" -ne 0 ]; then
@@ -136,6 +124,18 @@ function dtr_install {
     debug "Marking swarm initialization as complete in KV"
     curl -sX PUT -d "$HOSTNAME.node.consul" "$API_BASE/kv/dtr_swarm_initialized?release=$SID&flags=2"
     info "Finished initializing the DTR swarm"
+}
+
+function start_dtr {
+  set +e
+  docker run -d --name dtr --restart on-failure docker/dtr:${dtr_version} install \
+      --ucp-node $HOSTNAME \
+      --ucp-username '${ucp_admin_username}' \
+      --ucp-password '${ucp_admin_password}' \
+      --ucp-insecure-tls \
+      --ucp-url '${ucp_url}' \
+      --replica-id  $REPLICA_ID
+  set -e
 }
 
 function dtr_join {
