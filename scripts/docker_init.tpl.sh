@@ -159,7 +159,7 @@ function dtr_join {
         DTR_JOIN_ATTEMPTS=$((DTR_ATTEMPTS + 1))
         if [ $DTR_JOIN_ATTEMPTS -gt 10 ]; then
           error "DTR join failed too many times.  Exiting."
-          release_join_lock $SID
+          release_join_lock "$SID"
           exit 1
         else
           error "DTR failed to join.  Failed $DTR_JOIN_ATTEMPTS time(s).  Trying again."
