@@ -155,13 +155,20 @@ function dtr_join {
     done
     info "Acquired DTR join lock"
 
-    docker run -d --name dtr --restart on-failure docker/dtr:${dtr_version} join \
+    set +e
+    JOIN_OUTPUT=$(docker run -d --name dtr docker/dtr:${dtr_version} join \
         --ucp-node $HOSTNAME \
         --ucp-username '${ucp_admin_username}' \
         --ucp-password '${ucp_admin_password}' \
         --existing-replica-id 000000000000 \
         --ucp-insecure-tls \
-        --ucp-url ${ucp_url}
+        --ucp-url ${ucp_url} 2>&1)
+    JOIN_RESULT=$?
+    if [[ $JOIN_RESULT -ne 0 ]]; then
+      error "Join Failed: $JOIN_RESULT $JOIN_OUTPUT"
+      exit $JOIN_RESULT
+    fi
+    set -e
 
     info "Releasing DTR join lock."
     curl -sX PUT $API_BASE/kv/dtr/join_lock?release=$SID
