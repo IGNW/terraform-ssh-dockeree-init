@@ -168,7 +168,7 @@ function dtr_join {
       fi
     end
     info "DTR Join Complete"
-    release_join_lock $SID
+    release_join_lock "$SID"
 }
 
 function try_join_dtr {
@@ -192,7 +192,7 @@ function try_join_dtr {
   fi
 }
 
-function acquire_lock {
+function acquire_join_lock {
   # Ensure that only one DTR node can join at time to avoid contention.
   until [[ $(curl -sX PUT $API_BASE/kv/dtr/join_lock?acquire=$1) == "true" ]]; do
     info "Waiting to acquire DTR join lock"
