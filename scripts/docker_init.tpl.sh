@@ -144,28 +144,64 @@ function dtr_join {
     REPLICA_ID=$(curl -s $API_BASE/kv/dtr/replica_id | jq -r '.[0].Value' | base64 -d)
     info "Retrieved replica ID: $REPLICA_ID"
     debug "SID=$SID"
-    # Ensure that only one DTR node can join at time to avoid contention.
-    until [[ $(curl -sX PUT $API_BASE/kv/dtr/join_lock?acquire=$SID) == "true" ]]; do
-        info "Waiting to acquire DTR join lock"
-        sleep 15
-    done
-    info "Acquired DTR join lock"
 
-    set +e
-    JOIN_OUTPUT=$(docker run -d --name dtr docker/dtr:${dtr_version} join \
-        --ucp-node $HOSTNAME \
-        --ucp-username '${ucp_admin_username}' \
-        --ucp-password '${ucp_admin_password}' \
-        --existing-replica-id 000000000000 \
-        --ucp-insecure-tls \
-        --ucp-url ${ucp_url} 2>&1)
-    JOIN_RESULT=$?
-    if [[ $JOIN_RESULT -ne 0 ]]; then
-      error "Join Failed: $JOIN_RESULT $JOIN_OUTPUT"
-      exit $JOIN_RESULT
-    fi
-    set -e
+    aquire_join_lock
 
-    info "Releasing DTR join lock."
-    curl -sX PUT $API_BASE/kv/dtr/join_lock?release=$SID
+    DTR_JOIN_STATUS=1
+    DTR_JOIN_ATTEMPTS=0
+    until [ "$DTR_JOIN_STATUS" -eq 0 ]; do
+      info "Attempting to join DTR"
+      JOIN_OUTPUT=$(try_join_dtr)
+      DTR_JOIN_STATUS=$?
+
+      debug "$DTR_JOIN_STATUS: $JOIN_OUTPUT"
+      if [ "$DTR_JOIN_STATUS" -ne 0 ]; then
+        DTR_JOIN_ATTEMPTS=$((DTR_ATTEMPTS + 1))
+        if [ $DTR_JOIN_ATTEMPTS -gt 10 ]; then
+          error "DTR join failed too many times.  Exiting."
+          release_join_lock $SID
+          exit 1
+        else
+          error "DTR failed to join.  Failed $DTR_JOIN_ATTEMPTS time(s).  Trying again."
+          sleep 30
+        fi
+      fi
+    end
+    info "DTR Join Complete"
+    release_join_lock $SID
+}
+
+function try_join_dtr {
+  set +e
+  docker run -d --name dtr docker/dtr:${dtr_version} join \
+    --ucp-node $HOSTNAME \
+    --ucp-username '${ucp_admin_username}' \
+    --ucp-password '${ucp_admin_password}' \
+    --existing-replica-id 000000000000 \
+    --ucp-insecure-tls \
+    --ucp-url ${ucp_url} 2>&1
+  JOIN_RESULT=$?
+  set -e
+  if [[ $JOIN_RESULT -ne 0 ]]; then
+    return $JOIN_RESULT
+  fi
+  JOIN_RESULT=$(docker wait dtr)
+  if [[ $JOIN_RESULT -ne 0 ]]; then
+    docker logs dtr
+    return $JOIN_RESULT
+  fi
+}
+
+function acquire_lock {
+  # Ensure that only one DTR node can join at time to avoid contention.
+  until [[ $(curl -sX PUT $API_BASE/kv/dtr/join_lock?acquire=$1) == "true" ]]; do
+    info "Waiting to acquire DTR join lock"
+    sleep 15
+  done
+  info "Acquired DTR join lock"
+}
+
+function release_join_lock {
+  info "Releasing DTR join lock."
+  curl -sX PUT $API_BASE/kv/dtr/join_lock?release=$1
 }
