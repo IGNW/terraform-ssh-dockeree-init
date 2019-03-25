@@ -166,7 +166,7 @@ function dtr_join {
           sleep 30
         fi
       fi
-    end
+    done
     info "DTR Join Complete"
     release_join_lock "$SID"
 }
