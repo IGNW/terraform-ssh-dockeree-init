@@ -113,7 +113,7 @@ function dtr_install {
           error "DTR failed too many times.  Exiting."
           exit 1
         else
-          error "DTR failed to start.  Trying again."
+          error "DTR failed to start.  Failed $DTR_ATTEMPTS time(s).  Trying again."
           sleep 30
         fi
       fi
