@@ -113,11 +113,7 @@ function dtr_install {
         --ucp-url '${ucp_url}' \
         --replica-id  $REPLICA_ID "
 
-    if [ "${dtr_storage_type}" == "nfs" ]; then
-      DTR_COMMAND = "$DTR_COMMAND --dtr-external-url '${dtr_url}'"
-    fi
-
-    until [ "$DTR_STATUS" -eq 0 ]; do
+      until [ "$DTR_STATUS" -eq 0 ]; do
         info "Attempting to start DTR"
       set +e
       DTR_OUTPUT="$($DTR_COMMAND 2>&1)"
