@@ -179,6 +179,7 @@ function try_join_dtr {
     --ucp-password '${ucp_admin_password}' \
     --existing-replica-id 000000000000 \
     --ucp-insecure-tls \
+    ----nfs-storage-url '${dtr_nfs_url}' \
     --ucp-url ${ucp_url} 2>&1
   JOIN_RESULT=$?
   set -e
