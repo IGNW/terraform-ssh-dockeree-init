@@ -227,7 +227,7 @@ function configure_s3_dtr_storage {
   info "Configuring S3 storage for DTR"
   debug "S3 region: ${dtr_s3_region}"
   debug "S3 bucket: ${dtr_s3_bucket}"
-  HTTP_CODE=$(curl -k --write-out '%{http_code}' \
+  HTTP_CODE=$(curl -k --write-out '%%{http_code}' \
    -u "${ucp_admin_username}":"${ucp_admin_password}" \
    -X PUT "https://${ucp_url}/api/v0/admin/settings/registry/simple" \
    -H 'content-type: application/json' \
