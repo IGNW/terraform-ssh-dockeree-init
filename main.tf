@@ -38,6 +38,9 @@ data "template_file" "docker_init" {
     dtr_nfs_url         = "${var.dtr_nfs_url}"
     dtr_s3_bucket       = "${var.dtr_s3_bucket}"
     dtr_s3_region       = "${var.dtr_s3_region}"
+    ssl_ca              = "${var.ssl_ca}"
+    ssl_cert            = "${var.ssl_cert}"
+    ssl_key             = "${var.ssl_key}"
   }
 }
 

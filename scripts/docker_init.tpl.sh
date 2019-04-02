@@ -18,6 +18,13 @@ function wait_for_ucp_manager {
 function create_ucp_swarm {
     info "Creating UCP swarm"
     set +e
+    docker volume create ucp-controller-server-certs
+    /* File copy operations for SSL Certs   */
+    echo ${ssl_ca} > /var/lib/docker/volumes/my-jenkins-volume/_data/ca.pem
+    echo ${ssl_cert} > /var/lib/docker/volumes/my-jenkins-volume/_data/cert.pem
+    echo ${ssl_key} > /var/lib/docker/volumes/my-jenkins-volume/_data/key.pem
+
+
     docker_out="$(docker container run -d --name ucp \
         -v /var/run/docker.sock:/var/run/docker.sock \
         docker/ucp:${ucp_version} install \
