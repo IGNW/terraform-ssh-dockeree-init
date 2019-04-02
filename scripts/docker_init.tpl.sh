@@ -127,6 +127,12 @@ function dtr_install {
     debug "Marking swarm initialization as complete in KV"
     curl -sX PUT -d "$HOSTNAME.node.consul" "$API_BASE/kv/dtr_swarm_initialized?release=$SID&flags=2"
     info "Finished initializing the DTR swarm"
+
+    if [ -v ${dtr_s3_bucket} ]; then
+      configure_s3_dtr_storage
+    function name(parameter) {
+      #statements
+    }
 }
 
 function start_dtr {
@@ -215,4 +221,16 @@ function release_join_lock {
   SID=$1
   info "Releasing DTR join lock: $SID"
   curl -sX PUT $API_BASE/kv/dtr/join_lock?release=$SID
+}
+
+function configure_s3_dtr_storage {
+  info "Configuring S3 storage for DTR"
+  debug "S3 region: ${dtr_s3_region}"
+  debug "S3 bucket: ${dtr_s3_bucket}"
+  HTTP_CODE=$(curl -k --write-out '%{http_code}' \
+   -u "${ucp_admin_username}":"${ucp_admin_password}" \
+   -X PUT "https://${ucp_url}/api/v0/admin/settings/registry/simple" \
+   -H 'content-type: application/json' \
+   -d "{\"storage\":{\"delete\":{\"enabled\":true},\"maintenance\":{\"readonly\":{\"enabled\":false}},\"s3\":{\"rootdirectory\":\"\",\"region\":\"${dtr_s3_region}\",\"regionendpoint\":\"\",\"bucket\":\"${dtr_s3_bucket}\",\"secure\": true}}}")
+   debug "HTTP_CODE: $HTTP_CODE"
 }

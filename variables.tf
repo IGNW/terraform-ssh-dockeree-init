@@ -105,3 +105,13 @@ variable "dtr_storage_type" {
   description = "Type of DTR storage - one of nfs, s3"
   default = "volume"
 }
+
+variable "dtr_s3_bucket" {
+  description = "Name of the S3 bucket to use for DTR storage"
+  default = ""
+}
+
+variable "dtr_s3_region" {
+  description = "Region in which S3 bucket is located"
+  default = ""
+}

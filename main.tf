@@ -36,6 +36,7 @@ data "template_file" "docker_init" {
     dockeree_license    = "${var.dockeree_license}"
     dtr_storage_tye     = "${var.dtr_storage_type}"
     dtr_nfs_url         = "${var.dtr_nfs_url}"
+    dtr_s3_bucket       = "${var.dtr_s3_bucket}"
   }
 }
 
