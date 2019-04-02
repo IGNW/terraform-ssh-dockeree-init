@@ -33,6 +33,7 @@ function create_ucp_swarm {
         --admin-password ${ucp_admin_password} \
         --san '${ucp_url}' \
         --license '${dockeree_license}' 2>&1)"
+        --external-server-cert
     UCP_STATUS=$?
     set -e
     debug "UCP status: $UCP_STATUS"
