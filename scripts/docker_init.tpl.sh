@@ -225,10 +225,13 @@ function configure_s3_dtr_storage {
   info "Configuring S3 storage for DTR"
   debug "S3 region: ${dtr_s3_region}"
   debug "S3 bucket: ${dtr_s3_bucket}"
+  set +e
   HTTP_CODE=$(curl -k --write-out '%%{http_code}' \
    -u "${ucp_admin_username}":"${ucp_admin_password}" \
    -X PUT "${ucp_url}/api/v0/admin/settings/registry/simple" \
    -H 'content-type: application/json' \
    -d "{\"storage\":{\"delete\":{\"enabled\":true},\"maintenance\":{\"readonly\":{\"enabled\":false}},\"s3\":{\"rootdirectory\":\"\",\"region\":\"${dtr_s3_region}\",\"regionendpoint\":\"\",\"bucket\":\"${dtr_s3_bucket}\",\"secure\": true}}}")
-   debug "HTTP_CODE: $HTTP_CODE"
+   CURL_STATUS=$?
+   set -e
+   debug "CURL_STATUS: $CURL_STATUS; HTTP_CODE: $HTTP_CODE"
 }
