@@ -175,6 +175,10 @@ function dtr_join {
     done
     info "DTR Join Complete"
     release_join_lock "$SID"
+
+    if [ -n "${dtr_s3_bucket}" ]; then
+      configure_s3_dtr_storage
+    fi
 }
 
 function try_join_dtr {
