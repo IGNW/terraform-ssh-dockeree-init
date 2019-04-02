@@ -20,9 +20,9 @@ function create_ucp_swarm {
     set +e
     docker volume create ucp-controller-server-certs
     /* File copy operations for SSL Certs   */
-    echo ${ssl_ca} > /var/lib/docker/volumes/my-jenkins-volume/_data/ca.pem
-    echo ${ssl_cert} > /var/lib/docker/volumes/my-jenkins-volume/_data/cert.pem
-    echo ${ssl_key} > /var/lib/docker/volumes/my-jenkins-volume/_data/key.pem
+    echo ${ssl_ca} > /var/lib/docker/volumes/ucp-controller-server-certs/_data/ca.pem
+    echo ${ssl_cert} > /var/lib/docker/volumes/mucp-controller-server-certs/_data/cert.pem
+    echo ${ssl_key} > /var/lib/docker/volumes/mucp-controller-server-certs/_data/key.pem
 
 
     docker_out="$(docker container run -d --name ucp \
@@ -32,8 +32,8 @@ function create_ucp_swarm {
         --admin-username ${ucp_admin_username} \
         --admin-password ${ucp_admin_password} \
         --san '${ucp_url}' \
-        --license '${dockeree_license}' 2>&1)"
-        --external-server-cert
+        --license '${dockeree_license}' 2>&1)
+        --external-server-cert"
     UCP_STATUS=$?
     set -e
     debug "UCP status: $UCP_STATUS"
