@@ -128,7 +128,7 @@ function dtr_install {
     curl -sX PUT -d "$HOSTNAME.node.consul" "$API_BASE/kv/dtr_swarm_initialized?release=$SID&flags=2"
     info "Finished initializing the DTR swarm"
 
-    if [ -v ${dtr_s3_bucket} ]; then
+    if [ -n "${dtr_s3_bucket}" ]; then
       configure_s3_dtr_storage
     fi
 }
