@@ -162,7 +162,7 @@ function dtr_join {
 
       debug "JOIN_RESULT: $DTR_JOIN_RESULT"
       if [ "$DTR_JOIN_RESULT" -ne 0 ]; then
-        DTR_JOIN_ATTEMPTS=$((DTR_ATTEMPTS + 1))
+        DTR_JOIN_ATTEMPTS=$((DTR_JOIN_ATTEMPTS + 1))
         if [ $DTR_JOIN_ATTEMPTS -gt 10 ]; then
           error "DTR join failed too many times.  Exiting."
           release_join_lock "$SID"
