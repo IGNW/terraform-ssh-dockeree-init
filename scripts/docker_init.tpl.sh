@@ -130,9 +130,7 @@ function dtr_install {
 
     if [ -v ${dtr_s3_bucket} ]; then
       configure_s3_dtr_storage
-    function name(parameter) {
-      #statements
-    }
+    fi
 }
 
 function start_dtr {
