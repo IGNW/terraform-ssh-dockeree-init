@@ -116,16 +116,28 @@ variable "dtr_s3_region" {
   default = ""
 }
 
+variable "dtr_s3_access_key" {
+  description = "AWS access key for IAM account to use with S3 bucket for DTR storage"
+  default = ""
+}
+
+variable "dtr_s3_secret_key" {
+  description = "AWS secret key for IAM account to use with S3 bucket for DTR storage"
+  default = ""
+}
+
 /* Wildcard SSL Certificates  (if needed) */
 variable "ssl_ca" {
   description = "CA PEM"
+  default = ""
 }
 
 variable "ssl_cert" {
   description = "SSL Cert"
+  default = ""
 }
 
 variable "ssl_key" {
   description = "SSL Key"
+  default = ""
 }
-

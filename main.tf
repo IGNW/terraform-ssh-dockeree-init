@@ -41,6 +41,8 @@ data "template_file" "docker_init" {
     ssl_ca              = "${var.ssl_ca}"
     ssl_cert            = "${var.ssl_cert}"
     ssl_key             = "${var.ssl_key}"
+    dtr_s3_access_key   = "${var.dtr_s3_access_key}"
+    dtr_s3_secret_key   = "${var.dtr_s3_secret_key}"
   }
 }
 
