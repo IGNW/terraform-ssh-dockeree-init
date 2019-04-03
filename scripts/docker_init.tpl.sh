@@ -25,7 +25,7 @@ function create_ucp_swarm {
     #
     debug "SSL CA: ${ssl_ca}"
     debug "SSL CERT: ${ssl_cert}"
-    debug "SSL_KEY: ${ssl_key}""
+    debug "SSL_KEY: ${ssl_key}"
     if [ -z "${ssl_ca}"] || [ -z "${ssl_cert}"] || [ -z "${ssl_key}"]
       then
         # SSL_CA var is empty, so we will do nothing.
