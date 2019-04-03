@@ -23,11 +23,14 @@ function create_ucp_swarm {
     #    However, if ALL of them are populated, then we have some work to do.
     #    See:  https://success.docker.com/article/how-do-i-provide-an-externally-generated-security-certificate-during-the-ucp-command-line-installation
     #
+    debug "SSL CA: ${ssl_ca}"
+    debug "SSL CERT: ${ssl_cert}"
+    debug "SSL_KEY: ${ssl_key}""
     if [ -z "${ssl_ca}"] || [ -z "${ssl_cert}"] || [ -z "${ssl_key}"]
       then
         # SSL_CA var is empty, so we will do nothing.
         info "No custom SSL certificates provided - using self-signed certs"
-        export CERTIFICATE_FLAG = ""
+        export CERTIFICATE_FLAG=""
       else
         info "Configuring custom SSL certificates"
         # Create a local docker volume to hold the custom certificates
@@ -36,9 +39,10 @@ function create_ucp_swarm {
         echo ${ssl_ca} > /var/lib/docker/volumes/ucp-controller-server-certs/_data/ca.pem
         echo ${ssl_cert} > /var/lib/docker/volumes/mucp-controller-server-certs/_data/cert.pem
         echo ${ssl_key} > /var/lib/docker/volumes/mucp-controller-server-certs/_data/key.pem
-        export CERTIFICATE_FLAG = "--external-server-cert"
+        export CERTIFICATE_FLAG="--external-server-cert"
     fi
 
+    set -x
     docker_out="$(docker container run -d --name ucp \
         -v /var/run/docker.sock:/var/run/docker.sock \
         docker/ucp:${ucp_version} install \
@@ -50,6 +54,7 @@ function create_ucp_swarm {
         $CERTIFICATE_FLAG)"
     UCP_STATUS=$?
     set -e
+    set +x
     debug "UCP status: $UCP_STATUS"
     debug "$docker_out"
     if [ $UCP_STATUS -ne 0 ]; then
