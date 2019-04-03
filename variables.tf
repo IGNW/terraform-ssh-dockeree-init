@@ -115,3 +115,17 @@ variable "dtr_s3_region" {
   description = "Region in which S3 bucket is located"
   default = ""
 }
+
+/* Wildcard SSL Certificates  (if needed) */
+variable "ssl_ca" {
+  description = "CA PEM"
+}
+
+variable "ssl_cert" {
+  description = "SSL Cert"
+}
+
+variable "ssl_key" {
+  description = "SSL Key"
+}
+
