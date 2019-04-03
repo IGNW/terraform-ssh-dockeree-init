@@ -256,9 +256,9 @@ function configure_s3_dtr_storage {
   set +e
   HTTP_CODE=$(curl -k --write-out '%%{http_code}' \
    -u "${ucp_admin_username}":"${ucp_admin_password}" \
-   -X PUT "${ucp_url}/api/v0/admin/settings/registry/simple" \
+   -X PUT "${dtr_url}/api/v0/admin/settings/registry/simple" \
    -H 'content-type: application/json' \
-   -d "{\"storage\":{\"delete\":{\"enabled\":true},\"maintenance\":{\"readonly\":{\"enabled\":false}},\"s3\":{\"rootdirectory\":\"\",\"region\":\"${dtr_s3_region}\",\"regionendpoint\":\"\",\"bucket\":\"${dtr_s3_bucket}\",\"secure\": true}}}")
+   -d "{\"storage\":{\"delete\":{\"enabled\":true},\"maintenance\":{\"readonly\":{\"enabled\":false}},\"s3\":{\"rootdirectory\":\"\",\"accesskey\":\"${dtr_s3_access_key}\",\"secretkey\":\"${dtr_s3_secret_key}\",\"region\":\"${dtr_s3_region}\",\"regionendpoint\":\"\",\"bucket\":\"${dtr_s3_bucket}\",\"secure\": true}}}")
    CURL_STATUS=$?
    set -e
    debug "CURL_STATUS: $CURL_STATUS; HTTP_CODE: $HTTP_CODE"
