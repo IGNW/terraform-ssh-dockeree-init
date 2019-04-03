@@ -23,7 +23,7 @@ function create_ucp_swarm {
     #    However, if ALL of them are populated, then we have some work to do.
     #    See:  https://success.docker.com/article/how-do-i-provide-an-externally-generated-security-certificate-during-the-ucp-command-line-installation
     #
-    if [ -z "$SSL_CA"] || [ -z "$SSL_CERT"] || [ -z "$SSL_KEY"]
+    if [ -z "${ssl_ca}"] || [ -z "${ssl_cert}"] || [ -z "${ssl_key}"]
       then
         # SSL_CA var is empty, so we will do nothing.
         info "No custom SSL certificates provided - using self-signed certs"
