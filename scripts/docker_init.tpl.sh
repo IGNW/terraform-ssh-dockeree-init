@@ -26,8 +26,10 @@ function create_ucp_swarm {
     if [ -z "$SSL_CA"] || [ -z "$SSL_CERT"] || [ -z "$SSL_KEY"]
       then
         # SSL_CA var is empty, so we will do nothing.
+        info "No custom SSL certificates provided - using self-signed certs"
         export CERTIFICATE_FLAG = ""
       else
+        info "Configuring custom SSL certificates"
         # Create a local docker volume to hold the custom certificates
         docker volume create ucp-controller-server-certs
         # Create files for the SSL Certs
@@ -37,9 +39,6 @@ function create_ucp_swarm {
         export CERTIFICATE_FLAG = "--external-server-cert"
     fi
 
-
-
-
     docker_out="$(docker container run -d --name ucp \
         -v /var/run/docker.sock:/var/run/docker.sock \
         docker/ucp:${ucp_version} install \
@@ -47,9 +46,8 @@ function create_ucp_swarm {
         --admin-username ${ucp_admin_username} \
         --admin-password ${ucp_admin_password} \
         --san '${ucp_url}' \
-        --license '${dockeree_license}'
-        $CERTIFICATE_FLAG
-        )"
+        --license '${dockeree_license}' \
+        $CERTIFICATE_FLAG)"
     UCP_STATUS=$?
     set -e
     debug "UCP status: $UCP_STATUS"
