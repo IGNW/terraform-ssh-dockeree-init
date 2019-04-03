@@ -18,26 +18,26 @@ function wait_for_ucp_manager {
 function create_ucp_swarm {
     info "Creating UCP swarm"
     set +e
-    /*  IF (any of) the certificate variables are not populated, we will use the
-        built-in certificate provided by DockerEE.
-        However, if ALL of them are populated, then we have some work to do.
-        See:  https://success.docker.com/article/how-do-i-provide-an-externally-generated-security-certificate-during-the-ucp-command-line-installation
-    */
-    if [ -z "$SSL_CA"] || [ -z "$SSL_CERT"] || [ -z "$SSL_KEY"] 
+    #  IF (any of) the certificate variables are not populated, we will use the
+    #    built-in certificate provided by DockerEE.
+    #    However, if ALL of them are populated, then we have some work to do.
+    #    See:  https://success.docker.com/article/how-do-i-provide-an-externally-generated-security-certificate-during-the-ucp-command-line-installation
+    #
+    if [ -z "$SSL_CA"] || [ -z "$SSL_CERT"] || [ -z "$SSL_KEY"]
       then
-        /* SSL_CA var is empty, so we will do nothing. */
+        # SSL_CA var is empty, so we will do nothing.
         export CERTIFICATE_FLAG = ""
       else
-        /* Create a local docker volume to hold the custom certificates */
+        # Create a local docker volume to hold the custom certificates
         docker volume create ucp-controller-server-certs
-        /* Create files for the SSL Certs   */
+        # Create files for the SSL Certs
         echo ${ssl_ca} > /var/lib/docker/volumes/ucp-controller-server-certs/_data/ca.pem
         echo ${ssl_cert} > /var/lib/docker/volumes/mucp-controller-server-certs/_data/cert.pem
         echo ${ssl_key} > /var/lib/docker/volumes/mucp-controller-server-certs/_data/key.pem
         export CERTIFICATE_FLAG = "--external-server-cert"
     fi
 
-    
+
 
 
     docker_out="$(docker container run -d --name ucp \
