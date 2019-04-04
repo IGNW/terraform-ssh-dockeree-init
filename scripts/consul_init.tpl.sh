@@ -42,14 +42,14 @@ function wait_for_consul_leader {
 
 function consul_agent_init {
     consul_prepare
-    info "Initializing Consul agent - connecting to ${manager_ip}"
+    info "Initializing Consul agent - connecting to ${consul_server}"
     docker_out="$(docker run -d --net=host --name consul \
         consul:${consul_version} agent \
         -bind='0.0.0.0' \
         -advertise="$ADV_IP" \
         -data-dir='/tmp' \
         -encrypt='${consul_secret}' \
-        -retry-join='${manager_ip}' 2>&1)"
+        -retry-join='${consul_server}' 2>&1)"
     consul_code=$?
     debug "$docker_out"
 
