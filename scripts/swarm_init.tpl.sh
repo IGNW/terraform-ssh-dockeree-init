@@ -2,7 +2,6 @@
 # This script initializes Consul, UCP, and DTR clusters.
 # Further nodes are joined after the initial server/manager nodes are created.
 
-set -e
 API_BASE="http://127.0.0.1:8500/v1"
 
 source $(dirname "$0")/consul_init.sh
@@ -13,18 +12,30 @@ source $(dirname "$0")/shared.sh
 NETWORK_INTERFACE=$(ip route | grep default | sed -e "s/^.*dev.//" -e "s/.proto.*//")
 my_ip $NETWORK_INTERFACE
 
-debug "----------------------"
-debug "https_proxy: $http_proxy"
-debug "HTTPS_PROXY: $HTTPS_PROXY"
-debug "http_proxy: $http_proxy"
-debug "HTTP_PROXY: $HTTP_PROXY"
-debug "no_proxy: $no_proxy"
-debug "NO_PROXY: $NO_PROXY"
-debug "----------------------"
+verbose "----------------------"
+verbose "https_proxy: $http_proxy"
+verbose "HTTPS_PROXY: $HTTPS_PROXY"
+verbose "http_proxy: $http_proxy"
+verbose "HTTP_PROXY: $HTTP_PROXY"
+verbose "no_proxy: $no_proxy"
+verbose "NO_PROXY: $NO_PROXY"
+verbose "----------------------"
+
+# If specified, add the load-balancers' IPs to /etc/hosts so we can route to them without relying on DNS
+if [ "${ucp_ip}" ]; then
+  printf "${ucp_ip}  ${ucp_fqdn}\n" >> /etc/hosts
+fi
+
+if [ "${dtr_ip}" ]; then
+  printf "${dtr_ip}  ${dtr_fqdn}\n" >> /etc/hosts
+fi
+
+UCP_URL="https://${ucp_fqdn}"
+DTR_URL="https://${dtr_fqdn}"
 
 if [[ ${node_type} == "mgr" ]]; then
     info "This is a manager node"
-
+      UCP_URL="https://localhost"
       consul_server_init
       SID=$(curl -sX PUT $API_BASE/session/create | jq -r '.ID')
       # Check a key to find out if the UCP swarm is already initialized
@@ -42,6 +53,8 @@ if [[ ${node_type} == "mgr" ]]; then
         if [[ $R == "true" ]]; then
             info "Got the lock. Initializing the UCP swarm."
             create_ucp_swarm
+            configure_ucp
+            mark_swarm_ready ucp
         else
             info "Someone else got the lock first? R:($R)"
             swarm_wait_until_ready ucp ucp_swarm_initialized
@@ -67,6 +80,7 @@ elif [[ ${node_type} == "wrk" ]]; then
 
 elif [[ ${node_type} == "dtr" ]]; then
     info "This is a DTR worker node"
+    DTR_URL="https://localhost"
     consul_agent_init
     swarm_wait_until_ready ucp ucp_swarm_initialized
     ucp_join_worker
@@ -86,7 +100,8 @@ elif [[ ${node_type} == "dtr" ]]; then
         if [[ $R == "true" ]]; then
             info "Got the lock. Initializing the DTR swarm."
             dtr_install
-
+            configure_dtr
+            mark_swarm_ready dtr
         else
             info "Someone else got the lock first? R:($R)"
             swarm_wait_until_ready dtr dtr_swarm_initialized
@@ -104,4 +119,4 @@ elif [[ ${node_type} == "dtr" ]]; then
     fi
     curl -sX PUT $API_BASE/session/destroy/$SID
 fi
-info "CONFIGURATION COMPLETE"
+info "INSTALLATION COMPLETE"

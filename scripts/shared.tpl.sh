@@ -3,15 +3,23 @@ function timestamp {
 }
 
 function debug {
-  echo "$(timestamp) DEBUG:  $HOSTNAME $1"
+  if [ "${debug_output}" -eq 1 ] || [ "${verbose_output}" -eq 1 ]; then
+    echo "$(timestamp) DEBUG:   $HOSTNAME $1"
+  fi
+}
+
+function verbose {
+  if [ "${verbose_output}" -eq 1 ]; then
+    echo "$(timestamp) VERBOSE:  $HOSTNAME $1"
+  fi
 }
 
 function info {
-  echo "$(timestamp) INFO:  $HOSTNAME $1"
+  echo "$(timestamp) INFO:    $HOSTNAME $1"
 }
 
 function error {
-  echo "$(timestamp) ERROR: $HOSTNAME $1"
+  echo "$(timestamp) ERROR:   $HOSTNAME $1"
 }
 
 function my_ip {

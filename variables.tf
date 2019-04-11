@@ -21,12 +21,26 @@ variable "node_type" {
   description = "One of: mgr, wrk, dtr"
 }
 
-variable "ucp_url" {
-  description = "URL where we can reach the UCP"
+variable "ucp_ip" {
+  description = "IP address of the UCP's load balancer (if omitted we rely on DNS)"
+  default = ""
 }
 
-variable "dtr_url" {
-  description = "URL where we can reach the DTR"
+variable "ucp_fqdn" {
+  description = "Fully qualified domain name for the UCP's load balancer "
+}
+
+variable "dtr_ip" {
+  description = "IP address of the DTR's load balancer (if omitted we rely on DNS)"
+  default = ""
+}
+
+variable "dtr_fqdn" {
+  description = "Fully qualified domain name to use for the DTR's load balancer"
+}
+
+variable "consul_server" {
+  description = "Address of a consul server"
 }
 
 variable "ssh_username" {
@@ -73,9 +87,12 @@ variable "consul_version" {
   default = "1.4.2"
 }
 
-variable manager_ip {
-  description = "IP address of a manager node for cluster join operations"
-}
+#variable manager_ip {
+#  description = "IP address of a manager node for cluster join operations"
+#}
+
+
+
 
 variable consul_secret {
   description = "Secret key for encrypting consul communications"
@@ -126,18 +143,32 @@ variable "dtr_s3_secret_key" {
   default = ""
 }
 
-/* Wildcard SSL Certificates  (if needed) */
-variable "ssl_ca" {
+variable "use_custom_ssl" {
+  description = "1 if using custom SSL certs, 0 if using self-signed certs"
+  default = "0"
+}
+
+variable "ssl_ca_file" {
   description = "CA PEM"
   default = ""
 }
 
-variable "ssl_cert" {
+variable "ssl_cert_file" {
   description = "SSL Cert"
   default = ""
 }
 
-variable "ssl_key" {
+variable "ssl_key_file" {
   description = "SSL Key"
   default = ""
+}
+
+variable "debug_output" {
+  description = "Set to 1 to enable debug output, 0 to disable"
+  default = "1"
+}
+
+variable "verbose_output" {
+  description = "Set to 1 to enable verbose output, 0 to disable"
+  default = "0"
 }
