@@ -1,5 +1,3 @@
-source $(dirname "$0")/shared.sh
-
 function wait_for_api {
     URL=$1
     until $(curl -k --output /dev/null --silent --head --fail $URL); do
@@ -270,11 +268,11 @@ function configure_dtr_ssl {
 
   if [ "${use_custom_ssl}" -eq 1 ]; then
     info "Configuring custom SSL certificates for the UCP"
-    # Read certs from files and replace actual newlines with \n's
+    # Read certs from files and replace actual newlines with \n
     CA=$(sed -E ':a;N;$!ba;s/\r{0,1}\n/\\n/g' $(dirname "$0")/ca.pem)
     CERT=$(sed -E ':a;N;$!ba;s/\r{0,1}\n/\\n/g' $(dirname "$0")/cert.pem)
     KEY=$(sed -E ':a;N;$!ba;s/\r{0,1}\n/\\n/g' $(dirname "$0")/key.pem)
-    debug "I've read in those files (and replaced the newlines with \n's)"
+    debug "I've read in those files (and replaced the newlines with \n)"
     verbose "CA: $CA"
     verbose "CERT: $CERT"
     verbose "KEY: $KEY":
