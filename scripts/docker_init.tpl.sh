@@ -217,6 +217,7 @@ function configure_ucp {
 function configure_dtr {
   info "Configuring the DTR settings"
   wait_for_api $UCP_URL
+  wait_for_dtr $DTR_URL
   configure_dtr_ssl
   if [ -n "${dtr_s3_bucket}" ]; then
     configure_s3_dtr_storage
