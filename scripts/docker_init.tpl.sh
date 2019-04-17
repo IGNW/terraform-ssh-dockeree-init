@@ -90,13 +90,13 @@ function dtr_install {
     wait_for_api $UCP_URL
 
     sleep 30
-    DTR_STATUS=1
-    DTR_ATTEMPTS=0
+    DTR_INSTALL_RESULT=1
+    DTR_INSTALL_ATTEMPTS=0
     REPLICA_ID="000000000000"
 
-    until [ "$DTR_STATUS" -eq 0 ]; do
-      info "Attempting to start DTR"
-      DTR_OUTPUT="$(start_dtr)"
+    until [ "$DTR_INSTALL_RESULT" -eq 0 ]; do
+      info "Attempting to install the DTR"
+      start_dtr
       DTR_STATUS=$?
       debug "$DTR_STATUS : $DTR_OUTPUT"
       if [ "$DTR_STATUS" -ne 0 ]; then
@@ -120,14 +120,27 @@ function start_dtr {
   UCP_LEADER="$(curl -s $API_BASE/kv/ucp_leader?raw=true | jq -r '.ip')"
   debug "UCP_LEADER: $UCP_LEADER"
 
-  docker run -d --name dtr --restart on-failure docker/dtr:${dtr_version} install \
+  OUTOPUT=$(docker run -d --name dtr docker/dtr:${dtr_version} install \
       --ucp-node $HOSTNAME \
       --ucp-username '${ucp_admin_username}' \
       --ucp-password '${ucp_admin_password}' \
       --ucp-url "$UCP_URL" \
       --nfs-storage-url '${dtr_nfs_url}' \
       --replica-id  $REPLICA_ID \
-      --ucp-insecure-tls
+      --ucp-insecure-tls 2>&1)
+
+  DTR_INSTALL_RESULT=$?
+  debug "DTR_INSTALL_RESULT (from container run result)"
+  debug "OUTPUT: $OUTPUT"
+  if [[ $DTR_INSTALL_RESULT -eq 0 ]]; then
+    DTR_INSTALL_RESULT=$(docker wait dtr)
+    debug "DTR_INSTALL_RESULT (from container exit code): $DTR_INSTALL_RESULT"
+    if [[ $DTR_INSTALL_RESULT -ne 0 ]]; then
+      info "DTR install container exited with an error $DTR_INSTALL_RESULT"
+      debug "Docker logs: $(docker logs dtr 2>&1)"
+      docker rm dtr
+    fi
+  fi
 }
 
 function dtr_join {

@@ -87,13 +87,6 @@ variable "consul_version" {
   default = "1.4.2"
 }
 
-#variable manager_ip {
-#  description = "IP address of a manager node for cluster join operations"
-#}
-
-
-
-
 variable consul_secret {
   description = "Secret key for encrypting consul communications"
 }
