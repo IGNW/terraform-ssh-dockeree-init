@@ -61,7 +61,7 @@ data "template_file" "docker_init" {
 resource "null_resource" "upload_ssl_cert_files"
 {
   triggers {
-    resource_id = "${join(",",var.resource_ids)}"
+   resource_id = "${join(",",var.resource_ids)}"
   }
 
   count = "${var.node_count * var.use_custom_ssl}"
@@ -156,6 +156,7 @@ resource "null_resource" "dockeree_run_init"
   provisioner "remote-exec" {
     inline = [
       <<EOT
+echo "CERT: ${var.ssl_cert_file}, CA: ${var.ssl_ca_file}, KEY: ${var.ssl_key_File}" | tee ${var.script_path}/cert_paths.log
 chmod +x ${var.script_path}/swarm_init.sh
 echo "${var.ssh_password}" | sudo -E -S ${var.script_path}/swarm_init.sh | tee ${var.script_path}/swarm_init.log
 EOT

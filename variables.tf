@@ -143,17 +143,17 @@ variable "use_custom_ssl" {
 
 variable "ssl_ca_file" {
   description = "CA PEM"
-  default = ""
+  default = "No CA provided. This default value set in terraform-ssh-dockeree-init"
 }
 
 variable "ssl_cert_file" {
   description = "SSL Cert"
-  default = ""
+  default = "No CERT provided. This default value set in terraform-ssh-dockeree-init"
 }
 
 variable "ssl_key_file" {
   description = "SSL Key"
-  default = ""
+  default = "No KEY provided. This default value set in terraform-ssh-dockeree-init"
 }
 
 variable "debug_output" {
