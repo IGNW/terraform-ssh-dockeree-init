@@ -79,7 +79,6 @@ resource "null_resource" "upload_ssl_cert_files"
     source      = "${var.ssl_ca_file}"
     destination = "${var.script_path}/ca.pem"
   }
-
   provisioner "file" {
     source      = "${var.ssl_cert_file}"
     destination = "${var.script_path}/cert.pem"
