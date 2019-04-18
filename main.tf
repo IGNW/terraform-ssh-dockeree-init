@@ -58,8 +58,8 @@ data "template_file" "docker_init" {
   }
 }
 
-#resource "null_resource" "upload_ssl_cert_files"
-#{
+resource "null_resource" "upload_ssl_cert_files"
+{
 #  triggers {
 #    resource_id = "${join(",",var.resource_ids)}"
 #  }
@@ -90,7 +90,7 @@ data "template_file" "docker_init" {
 #    destination = "${var.script_path}/key.pem"
 #  }
 
-#}
+}
 
 resource "null_resource" "dockeree_upload_scripts"
 {
