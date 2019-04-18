@@ -45,7 +45,7 @@ function mark_swarm_ready {
 }
 
 function ucp_join_manager {
-    wait_for_api $UCP_URL
+    
     info "UCP manager joining swarm"
     UCP_LEADER="$(curl -s $API_BASE/kv/ucp_leader?raw=true | jq -r '.ip')"
     debug "UCP_LEADER: $UCP_LEADER"
