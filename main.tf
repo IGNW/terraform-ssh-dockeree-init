@@ -60,35 +60,35 @@ data "template_file" "docker_init" {
 
 resource "null_resource" "upload_ssl_cert_files"
 {
-#  triggers {
-#    resource_id = "${join(",",var.resource_ids)}"
-#  }
+  triggers {
+   resource_id = "${join(",",var.resource_ids)}"
+  }
 
-#  count = "${var.node_count * var.use_custom_ssl}"
+  count = "${var.node_count * var.use_custom_ssl}"
 
-#  connection = {
-#    type          = "ssh"
-#    host          = "${element (var.public_ips, count.index)}"
-#    user          = "${var.ssh_username}"
-#    password      = "${var.ssh_password}"
-#    private_key   = "${var.private_key}"
-#    bastion_host  = "${var.bastion_host}"
-#  }
+  connection = {
+    type          = "ssh"
+    host          = "${element (var.public_ips, count.index)}"
+    user          = "${var.ssh_username}"
+    password      = "${var.ssh_password}"
+    private_key   = "${var.private_key}"
+    bastion_host  = "${var.bastion_host}"
+  }
 
-#  provisioner "file" {
-#    source      = "${var.ssl_ca_file}"
-#    destination = "${var.script_path}/ca.pem"
-#  }
+  provisioner "file" {
+    source      = "${var.ssl_ca_file}"
+    destination = "${var.script_path}/ca.pem"
+  }
 
-#  provisioner "file" {
-#    source      = "${var.ssl_cert_file}"
-#    destination = "${var.script_path}/cert.pem"
-#  }
+  provisioner "file" {
+    source      = "${var.ssl_cert_file}"
+    destination = "${var.script_path}/cert.pem"
+  }
 
-#  provisioner "file" {
-#    source      = "${var.ssl_key_file}"
-#    destination = "${var.script_path}/key.pem"
-#  }
+  provisioner "file" {
+    source      = "${var.ssl_key_file}"
+    destination = "${var.script_path}/key.pem"
+  }
 
 }
 
