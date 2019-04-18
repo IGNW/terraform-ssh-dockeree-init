@@ -143,17 +143,14 @@ variable "use_custom_ssl" {
 
 variable "ssl_ca_file" {
   description = "CA PEM"
-  default = ""
 }
 
 variable "ssl_cert_file" {
   description = "SSL Cert"
-  default = ""
 }
 
 variable "ssl_key_file" {
   description = "SSL Key"
-  default = ""
 }
 
 variable "debug_output" {
