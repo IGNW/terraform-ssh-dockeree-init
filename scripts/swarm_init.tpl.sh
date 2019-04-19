@@ -5,9 +5,9 @@
 API_BASE="http://127.0.0.1:8500/v1"
 
 source $(dirname "$0")/consul_init.sh
-source $(dirname "$0")/docker_init.sh
+source $(dirname "$0")/ucp_init.sh
+source $(dirname "$0")/dtr_init.sh
 source $(dirname "$0")/shared.sh
-
 
 NETWORK_INTERFACE=$(ip route | grep default | sed -e "s/^.*dev.//" -e "s/.proto.*//")
 my_ip $NETWORK_INTERFACE
@@ -52,6 +52,7 @@ if [[ ${node_type} == "mgr" ]]; then
 
         if [[ $R == "true" ]]; then
             info "Got the lock. Initializing the UCP swarm."
+            initialize_cluster
             create_ucp_swarm
             configure_ucp
             mark_swarm_ready ucp

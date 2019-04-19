@@ -74,17 +74,17 @@ variable "ucp_admin_password" {
 
 variable "ucp_version" {
   description = "Version of UCP to install"
-  default = "3.0.3"
+  default = "latest"
 }
 
 variable "dtr_version" {
   description = "Version of DTR to install"
-  default = "2.6.2"
+  default = "latest"
 }
 
 variable "consul_version" {
   description = "Version of Consul to install"
-  default = "1.4.4"
+  default = "latest"
 }
 
 variable consul_secret {
