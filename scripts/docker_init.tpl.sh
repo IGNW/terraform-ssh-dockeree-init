@@ -16,9 +16,6 @@ function create_ucp_swarm {
         --host-address $NETWORK_INTERFACE \
         --admin-username ${ucp_admin_username} \
         --admin-password ${ucp_admin_password} \
-        --san ${ucp_fqdn} \
-        --san ${ucp_ip} \
-        --san $ADV_IP \
         --license '${dockeree_license}')"
     UCP_STATUS=$?
     if [ $UCP_STATUS -ne 0 ]; then
@@ -45,7 +42,7 @@ function mark_swarm_ready {
 }
 
 function ucp_join_manager {
-    
+
     info "UCP manager joining swarm"
     UCP_LEADER="$(curl -s $API_BASE/kv/ucp_leader?raw=true | jq -r '.ip')"
     debug "UCP_LEADER: $UCP_LEADER"
