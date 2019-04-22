@@ -182,7 +182,7 @@ function try_join_dtr {
     --ucp-password '${ucp_admin_password}' \
     --existing-replica-id 000000000000 \
     --ucp-insecure-tls \
-    --ucp-url '$UCP_URL' 2>&1)
+    --ucp-url "$UCP_URL" 2>&1)
 
   DTR_JOIN_RESULT=$?
   debug "JOIN_RESULT (from container run result): $DTR_JOIN_RESULT"
