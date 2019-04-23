@@ -84,7 +84,7 @@ variable "dtr_version" {
 
 variable "consul_version" {
   description = "Version of Consul to install"
-  default = "1.4.3"
+  default = "NO_CONSUL_VERSION_SPECIFIED_GOT_THIS_FROM_VALUE_FROM_TF-SSH-DOCKEREE-INIT"
 }
 
 variable consul_secret {
