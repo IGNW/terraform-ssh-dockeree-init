@@ -84,7 +84,7 @@ variable "dtr_version" {
 
 variable "consul_version" {
   description = "Version of Consul to install"
-  default = "1.4.2"
+  default = "1.4.3"
 }
 
 variable consul_secret {
