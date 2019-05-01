@@ -42,17 +42,17 @@ function start_dtr {
       --ucp-insecure-tls 2>&1)
 
   DTR_INSTALL_RESULT=$?
-  debug "DTR_INSTALL_RESULT (from container run result)"
+  debug "DTR_INSTALL_RESULT (from container run result): $DTR_INSTALL_RESULT"
   debug "OUTPUT: $OUTPUT"
   if [[ $DTR_INSTALL_RESULT -eq 0 ]]; then
     DTR_INSTALL_RESULT=$(docker wait dtr)
     debug "DTR_INSTALL_RESULT (from container exit code): $DTR_INSTALL_RESULT"
     if [[ $DTR_INSTALL_RESULT -ne 0 ]]; then
       info "DTR install container exited with an error $DTR_INSTALL_RESULT"
-      debug "Docker logs: $(docker logs dtr 2>&1)"
-      docker rm dtr
+      debug "Docker logs: $(docker logs dtr)"
     fi
   fi
+  docker rename dtr "dtr-$(timestamp)"
 }
 
 function dtr_join {
