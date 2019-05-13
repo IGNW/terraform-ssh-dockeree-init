@@ -14,7 +14,7 @@
     tlsSkipVerify = false
 [scheduling_configuration]
   enable_admin_ucp_scheduling = false
-  default_node_orchestrator = "kubernetes"
+  default_node_orchestrator = "swarm"
 [tracking_configuration]
   disable_usageinfo = true
   disable_tracking = true
