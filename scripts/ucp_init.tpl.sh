@@ -3,12 +3,12 @@ function initialize_cluster {
    set -x
    SWARM_INIT_OUT=$(docker swarm init --advertise-addr $ADV_IP 2>&1)
    set +x
-   debug $SWARM_INIT_OUT
+   debug "$SWARM_INIT_OUT"
    info "Apply initial UCP configuration"
    set -x
-   CONFIG_CREATE_OUT=$(docker config create com.docker.ucp.config ucp_config.toml 2>&1)
+   CONFIG_CREATE_OUT=$(docker config create com.docker.ucp.config $(dirname "$0")/ucp_config.toml 2>&1)
    set +x
-   debug $CONFIG_CREATE_OUT
+   debug "$CONFIG_CREATE_OUT"
 }
 
 function create_ucp_swarm {
@@ -20,22 +20,24 @@ function create_ucp_swarm {
         --host-address $ADV_IP \
         --admin-username ${ucp_admin_username} \
         --admin-password ${ucp_admin_password} \
+        --san ${ucp_fqdn} \
         --license '${dockeree_license}')"
     UCP_STATUS=$?
     if [ $UCP_STATUS -ne 0 ]; then
       error "$UCP_STATUS result from 'docker run docker/ucp install'"
     fi
 
-    info "Removing UCP configuration"
-    set -x
-    CONFIG_RM_OUT=$(docker config rm com.docker.ucp.config 2>&1)
-    set +x
-    debug $CONFIG_RM_OUT
-
     info "Registering this node as the UCP leader ($ADV_IP)"
     curl -sX PUT -d "{\"ip\": \"$ADV_IP\"}" $API_BASE/kv/ucp_leader
 
     wait_for_api $UCP_URL
+
+    info "Removing UCP configuration"
+    set -x
+    CONFIG_RM_OUT=$(docker config rm com.docker.ucp.config 2>&1)
+    set +x
+    debug "$CONFIG_RM_OUT"
+
     info "Storing manager/worker join tokens for UCP"
     MANAGER_TOKEN=$(docker swarm join-token -q manager 2>&1)
     WORKER_TOKEN=$(docker swarm join-token -q worker 2>&1)

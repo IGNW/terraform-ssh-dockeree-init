@@ -52,7 +52,8 @@ function start_dtr {
       debug "Docker logs: $(docker logs dtr)"
     fi
   fi
-  docker rename dtr "dtr-$(timestamp)"
+  timestamp=$(date "+%F_%T")
+  docker rename dtr "dtr-$timestamp"
 }
 
 function dtr_join {

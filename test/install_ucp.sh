@@ -7,6 +7,8 @@ source $(dirname "$0")/../shared.sh
 
 
 NETWORK_INTERFACE=$(ip route | grep default | sed -e "s/^.*dev.//" -e "s/.proto.*//")
+my_ip $NETWORK_INTERFACE
+export UCP_URL="https://localhost"
 CERTIFICATE_FLAG="--external-server-cert --preserve-certs"
 
 create_ucp_swarm
