@@ -1,9 +1,13 @@
 function initialize_cluster {
    info "Initializing the Docker EE cluster"
+   set -x
    SWARM_INIT_OUT=$(docker swarm init --advertise-addr $ADV_IP 2>&1)
+   set +x
    debug $SWARM_INIT_OUT
    info "Apply initial UCP configuration"
+   set -x
    CONFIG_CREATE_OUT=$(docker config create com.docker.ucp.config ucp_config.toml 2>&1)
+   set +x
    debug $CONFIG_CREATE_OUT
 }
 
@@ -21,6 +25,12 @@ function create_ucp_swarm {
     if [ $UCP_STATUS -ne 0 ]; then
       error "$UCP_STATUS result from 'docker run docker/ucp install'"
     fi
+
+    info "Removing UCP configuration"
+    set -x
+    CONFIG_RM_OUT=$(docker config rm com.docker.ucp.config 2>&1)
+    set +x
+    debug $CONFIG_RM_OUT
 
     info "Registering this node as the UCP leader ($ADV_IP)"
     curl -sX PUT -d "{\"ip\": \"$ADV_IP\"}" $API_BASE/kv/ucp_leader
